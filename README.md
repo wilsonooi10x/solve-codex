@@ -1,46 +1,54 @@
 # SOLVE OS
 
-Mobile-first black-and-gold prototype for State → Observe → List → Validate → Execute & Evolve.
+A mobile-first, black-and-gold problem-solving app: State → Observe → List → Validate → Execute & Evolve.
 
-## Run
+## Run locally
 
-Node.js 24; no package installation required.
+Node.js 24; no runtime package installation required. Run `npm start` (port 3000, override with PORT). `npm run check` checks JavaScript; `npm ci` installs the locked development test dependency (jsdom); `npm test` runs server, workflow and simulated two-device DOM tests. The connected Vercel project builds static assets into public/ and deploys api/ as serverless functions. Dependencies in lib/ and workflow.js are traced with those functions.
 
-```sh
-npm start
-```
+## AI activation in Vercel
 
-The app listens on port 3000 (override with PORT). `npm run check` checks JavaScript syntax.
+In Project Settings → Environment Variables, add these for Production, save and redeploy:
 
-Includes problem tracking, owner/PIC assignment fields, 5 Whys, solution scoring, pilot results, decision reasons, repeat-trial history, execution plans, KPIs and an optional business compass.
+- `ANTHROPIC_API_KEY`: Claude API key, server only. Claude Pro/Max subscriptions do not include API credit.
+- `SOLVE_ACCESS_CODE`: a long private workshop password. Participants enter this code under AI access, never an API key. It is a basic cost gate, not a user login or rate limit.
+- Optional `SOLVE_CLAUDE_MODEL` (default `claude-sonnet-4-6`).
 
-Data is stored in browser localStorage, initially populated with labelled demo problems. This is a single-device prototype: assignments do not send invitations, owner decisions are not authenticated, and there is no cloud sync, native mobile packaging. Do not use it as a secure multi-user system. Browser storage clearing removes saved data.
+If no Anthropic key exists, optional OpenAI fallback uses `SOLVE_AI_API_KEY` / `OPENAI_API_KEY`, with `SOLVE_AI_MODEL` defaulting to `gpt-4.1-mini`. Never commit API credentials. The selected provider receives submitted transcripts and problem/business context. Website extraction uses provider web search and requires source review. Missing statements should stay blank. Predictions are not guaranteed.
 
-Solution scores total impact + ease of effort + feasibility (each 1–5, higher is better). Move to scale requires metric, expected and actual results and rationale. Improve archives the completed trial and clears result/decision fields for the next trial.
+Speech uses the browser Web Speech API where available, requiring HTTPS and microphone permission; unsupported browsers retain typed input. The browser's speech provider may process audio. Participants review transcripts and press Continue to submit them to AI.
 
-## Guided voice and AI
+## Activate cross-device personal sync
 
-New problems begin with a short spoken or typed account. Speech uses the browser Web Speech API where available (HTTPS, microphone permission, supported browser); unsupported browsers keep typed input. Browser speech services may process audio. AI is requested only after the user clicks Draft. Review drafts before applying and saving. Existing worksheets have a collapsible voice/AI assistant; it populates editable fields only, never actual results or owner decisions.
+Until configured, the app continues to store work on each device. No database is provisioned by deploying this repository.
 
-In Vercel Project Settings → Environment Variables, add for Production:
+1. Create a project at https://supabase.com/dashboard using a database password saved in your password manager. Do not put that password in the app.
+2. Open SQL Editor → New query, paste the complete contents of `supabase/setup.sql`, and run it. It creates solve_records, per-user row-level security and revision checks. Running it again is supported.
+3. In Authentication → Providers, enable Email/password sign-in. Keep email confirmation enabled. In Authentication → URL Configuration, set Site URL to your deployed app URL (https://solve-codex.vercel.app). Supabase's default email sender has restrictions; configure custom SMTP for participants who aren't permitted recipients and for workshop-scale email delivery.
+4. Copy the project HTTPS URL and **publishable key** (or legacy **anon key**) from the project's Connect dialog / API settings. Add to Vercel Production environment variables:
+   - `SUPABASE_URL`: project HTTPS URL.
+   - `SUPABASE_ANON_KEY`: public publishable/anon key. This is intentionally public; access is enforced by RLS. **Never use a secret/service-role key.** The app rejects recognised privileged keys.
+5. Redeploy the latest Vercel version.
+6. On the phone holding your latest work, refresh without clearing browser data. Click **Sign in to sync**, create an account, confirm the email if required, and sign in. Review **Bring this device's earlier work into your account**, select the intended Validate-stage record and click **Upload selected records**. Wait for Saved in cloud.
+7. On the laptop, sign in with the exact same email and password. It loads the cloud records. Do not upload the stale State-stage record unless you want a separate copy. Close open worksheets, then use Sync now if necessary.
+8. Verify a small edit on one device appears on the other. Signed-in devices poll about every 15 seconds and on focus. This is periodic sync, not WebSocket realtime.
 
-- `ANTHROPIC_API_KEY`: your Claude/Anthropic API key (server only; never enter it in the website). Uses existing Anthropic API credit, not Claude Pro/Max subscription billing.
-- `SOLVE_ACCESS_CODE`: a long private code shared with authorised workshop participants. This is a basic cost gate, not individual authentication or rate limiting. Rotate it as needed.
-- Optional `SOLVE_CLAUDE_MODEL`: defaults to `claude-sonnet-4-6`.
-- OpenAI remains an optional fallback if no Anthropic key is configured: `SOLVE_AI_API_KEY` / `OPENAI_API_KEY`, and optional `SOLVE_AI_MODEL` (default `gpt-4.1-mini`). Anthropic takes precedence.
+If activation fails, the account panel reports the error and retains pending local edits. User accounts are separate from the workshop AI code. Supabase configuration and schema must be tested live before claiming cloud sync is operational.
 
-Redeploy after setting variables. Participants enter only the workshop access code under AI access. Provider billing and model/web-search access must be enabled. Company extraction uses the selected provider’s web search and returns quoted sources; inaccessible pages or absent PVMC statements require manual completion. Drafts are suggestions, not validated predictions. No API credentials are stored in browser storage. The workshop access code is kept in sessionStorage for the current tab.
+## Storage, migration and conflicts
 
-For local AI development, inject those variables into the Node process through your secret manager or shell before `npm start`. Do not commit credentials. `npm test` tests configuration/authentication errors, input rejection and filtering of prohibited result/decision fields with a mocked provider. Live provider behavior requires configured credentials and has not been verified in this environment. No shared database or user accounts have been added.
+Device work is backed up before sign-in. Guest work and account caches are kept separate. Earlier records are uploaded only when explicitly selected, not automatically merged. Unchanged demo records are omitted from migration choices. A differing imported record with the same ID becomes a separate copy; neither version silently replaces the other. Existing business compass conflicts are preserved for review/export.
 
-## Conversational SOLVE workflow
+Signed-in edits and conversation drafts queue automatically for cloud sync. Each update matches its last known database revision; a stale revision raises a conflict rather than overwriting a newer record. The user can keep both problem versions or explicitly use the cloud version. Business conflicts can be downloaded before choosing cloud. Incoming changes wait while editing dialogs are open to avoid replacing text being entered. Offline changes remain in the account cache and retry on reconnect; download a JSON backup from the account panel before clearing browser data.
 
-Tell SOLVE is now the main entry point. Each answer is processed by `/api/guide` into stage-specific fields with structured AI output, a short summary and one follow-up question. State and Observe advance automatically when both the model and required-field checks consider the stage complete. Observe should gather evidence before offering a working root cause; hypotheses remain visible for review. The captured record and full worksheet remain available for corrections.
+Accounts currently provide **personal sync only**. No shared team workspace, invitations, enforced owner/PIC roles, notification delivery or administrative audit trail has been implemented. The SQL policies isolate rows by auth.uid(); the workshop code does not grant database access. Auth sessions use browser localStorage, as do offline records and drafts. Sign out on shared devices. Offline copies are not remote backups until a successful sync.
 
-List shows suggested solutions, transparent 1–5 scores and priority choices (balanced, impact, ease). Scores are advisory estimates. The user explicitly selects a solution. Validate collects test, PIC, owner, date, numeric expected result, metric and measurement method conversationally. Confirming the pilot starts the waiting period. Only a numeric result quoted from the latest answer can populate actual results, and actuals are rejected before the pilot starts. An actual and feedback are required before decision buttons appear. Adopt/Improve/Stop/Move to scale require a recorded reason. Improve archives the trial; scaling explicitly opens Execute & Evolve. Execution captures plan, PIC, deadline, target/KPI, measurement method and next review. Neither model output nor a good-looking result can automatically approve scale.
+## Guided workflow
 
-Conversations, drafts, trial history and fields are stored in browser localStorage. Closing and reopening resumes the conversation. Errors retain the typed transcript; retry sends it again without duplicating a successful turn. No account authentication, PIC notification, cloud sync or outcome prediction has been added. The Vercel AI environment variables and redeployment instructions above still apply. Offline standalone HTML can show the interface and use manual worksheets but cannot call the AI endpoints; use the deployed URL for AI.
+Tell SOLVE presents one question at a time and maps replies into the worksheet. State and Observe advance when model readiness and required-field checks agree. Observations should support the working root cause. List shows suggested solutions, advisory scores and a priority selector; the user chooses the pilot. Validate gathers how, PIC, owner, due date, metric, numeric expected result and measurement method. User confirmation starts the pilot; actual results cannot be populated before that and must quote a numeric result from the user's latest answer. Result and feedback unlock explicit Adopt/Improve/Stop/Move to scale decisions with a reason. Improve archives the trial; only explicit scale opens Execute & Evolve. Execution captures plan, responsibilities, targets, KPI measurement and a next review. Users can inspect/correct the full worksheet.
 
-Validation: built-in tests cover stage gates, date formatting, priority ranking, access checks, rejection of invented results and prevention of model-initiated execution. DOM interaction checks with mocked AI covered the conversation through explicit scale, persistence/resume and failure recovery. Live provider quality and real phone speech still require verification after activation.
+## Validation status
 
-Claude support is tested with mocked Messages API/tool responses. Live billing, model access and website extraction require verification after the owner enters their key and redeploys. Never put an API key in SOLVE_ACCESS_CODE.
+Server tests cover AI access/input gates, rejected invented results, workflow progression, Claude structured calls, safe provider errors, and rejection of privileged Supabase keys. DOM checks with simulated providers and two simulated devices exercised sign-in, explicit phone migration, laptop loading, conflict copies, remote updates, account isolation, offline pending edits and conflict preservation. These mocks do not prove deployed RLS, email delivery or a live database connection. Live Claude and physical-device speech also require configured credentials and verification.
+
+The standalone solve-os-preview.html is a downloadable interface preview. Manual worksheets work locally; cloud and AI endpoints require the deployed website.
