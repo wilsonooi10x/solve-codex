@@ -2,6 +2,6 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": null,
   "installCommand": "",
-  "buildCommand": "mkdir -p public/assets && cp index.html app.js style.css workflow.js guided.js sync.js public/ && cp assets/engineering-thinking-hackathon.png public/assets/",
+  "buildCommand": "mkdir -p public/assets && cp index.html app.js style.css workflow.js guided.js sync.js manifest.webmanifest public/ && cp assets/*.png public/assets/",
   "outputDirectory": "public"
 }

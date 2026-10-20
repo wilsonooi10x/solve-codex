@@ -1,0 +1,16 @@
+{
+  "id": "/",
+  "name": "S.O.L.V.E OS",
+  "short_name": "SOLVE OS",
+  "description": "Your everyday problem-solving companion: State, Observe, List, Validate, Execute & Evolve.",
+  "lang": "en",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#031525",
+  "theme_color": "#031525",
+  "icons": [
+    {"src": "/assets/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any"},
+    {"src": "/assets/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any"}
+  ]
+}

@@ -54,3 +54,7 @@ Server tests cover AI access/input gates, rejected invented results, workflow pr
 The standalone solve-os-preview.html is a downloadable interface preview. Manual worksheets work locally; cloud and AI endpoints require the deployed website.
 
 Validation recovery: decision options are always visible with missing requirements. Record result & decide supports completed actions, including qualitative success criteria, without requiring historical PIC/due-date entry. The user must attest that the action took place and record expected versus actual outcomes before decisions unlock. Measured results accept single numbers, numbers with units and multiple metrics; mixed results retain their original text without an invalid aggregate difference. Qualitative mode also accepts observed outcomes. In-progress result forms save drafts so closing the form does not lose typed entries. Both retain an explicit decision and reason before scaling.
+
+## Home-screen icon
+
+The web manifest declares S.O.L.V.E OS with standalone display and 192/512px Android icons; iPhone uses the 180px apple-touch-icon. On iPhone, open the deployed URL in Safari → Share → Add to Home Screen (enable Open as Web App if offered). On Android, use Chrome → menu → Install app / Add to Home screen. Replace an existing shortcut if its old icon remains cached. Removing a shortcut is not the same as clearing browser/site data; do not clear storage to update an icon. No service worker/offline asset cache is added, so installing the shortcut does not add offline AI or database capabilities.
