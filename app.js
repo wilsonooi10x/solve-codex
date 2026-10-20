@@ -38,3 +38,6 @@ const baseRender=render;render=function(){baseRender();document.querySelectorAll
 const baseDetail=detail;detail=function(id){baseDetail(id);const d=document.querySelector('#detail'),p=problems.find(p=>p.id===id);const panel=voicePanel('problem',()=>({business,problem:p,stage:d.querySelector('[data-stage].selected')?.textContent}),data=>{for(const [k,v]of Object.entries(data.fields)){const input=d.querySelector('form').elements.namedItem(k);if(input&&v)input.value=v}});const wrapper=document.createElement('details');wrapper.className='stage-assist';wrapper.innerHTML='<summary>✧ Speak an update or get help with this step</summary>';wrapper.append(panel);d.querySelector('form').before(wrapper);if(!d.dataset.voiceCleanup){d.addEventListener('close',()=>voiceSession?.stop());d.dataset.voiceCleanup='true'}};
 document.querySelector('#mobile-new').onclick=openNew;
 render();
+
+// WebKit gesture events supplement the fixed mobile viewport; page scrolling stays enabled.
+for(const eventName of ['gesturestart','gesturechange'])document.addEventListener(eventName,event=>{if(window.matchMedia('(max-width: 800px)').matches)event.preventDefault()},{passive:false});
