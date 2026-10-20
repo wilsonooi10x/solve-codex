@@ -1,9 +1,10 @@
+const ai=require('../lib/ai');
 const crypto=require('node:crypto');
 const {stages,stageFields,missing}=require('../workflow');
 module.exports=async(req,res)=>{
  res.setHeader('Cache-Control','no-store');if(req.method!=='POST')return res.status(405).json({error:'Use POST.'});
- const key=process.env.SOLVE_AI_API_KEY||process.env.OPENAI_API_KEY,code=process.env.SOLVE_ACCESS_CODE;
- if(!key||!code)return res.status(503).json({error:'Guided AI needs activation. Add SOLVE_AI_API_KEY and SOLVE_ACCESS_CODE in Vercel, then redeploy. Your answer is kept here; you can also use the manual worksheet.'});
+ const code=process.env.SOLVE_ACCESS_CODE;
+ if(!ai.configured()||!code)return res.status(503).json({error:'Guided AI needs activation. Add ANTHROPIC_API_KEY and SOLVE_ACCESS_CODE in Vercel, then redeploy. Your answer is kept here; you can also use the manual worksheet.'});
  const hash=s=>crypto.createHash('sha256').update(String(s)).digest();if(!crypto.timingSafeEqual(hash(req.headers['x-solve-code']||''),hash(code)))return res.status(401).json({error:'Enter your workshop AI access code under AI access, then send again.'});
  let b=req.body;if(typeof b==='string'){try{b=JSON.parse(b)}catch{b=null}}
  if(!b||typeof b.message!=='string'||!b.message.trim()||b.message.length>6000||!stages.includes(b.stage)||!b.problem||typeof b.problem!=='object')return res.status(400).json({error:'A valid stage and an answer of 1–6,000 characters are required.'});
@@ -14,9 +15,7 @@ module.exports=async(req,res)=>{
  try{
  const context={stage:b.stage,problem:b.problem,business:b.business||{},history:Array.isArray(b.history)?b.history.slice(-12):[],clientDate:b.clientDate,timezone:b.timezone};
  if(JSON.stringify(context).length>40000)return res.status(400).json({error:'This conversation is too large. Please use a shorter update.'});
- const r=await fetch('https://api.openai.com/v1/responses',{method:'POST',signal:AbortSignal.timeout(45000),headers:{'Content-Type':'application/json',Authorization:`Bearer ${key}`},body:JSON.stringify({model:process.env.SOLVE_AI_MODEL||'gpt-4.1-mini',instructions:instruction,input:JSON.stringify({context,message:b.message}),max_output_tokens:2500,text:{format:{type:'json_schema',name:'solve_guided_turn',strict:true,schema}}})});
- if(!r.ok)return res.status(502).json({error:'AI could not respond. Check API billing/model access or try again. Your answer has not been lost.'});
- const data=await r.json();const raw=JSON.parse((data.output||[]).flatMap(x=>x.content||[]).filter(x=>x.type==='output_text').map(x=>x.text).join(''));
+ const raw=await ai.generate({instructions:instruction,input:JSON.stringify({context,message:b.message}),schema,maxTokens:3000});
  const fields={};for(const k of keys){if(typeof raw.fields?.[k]==='string'&&raw.fields[k].trim())fields[k]=raw.fields[k].slice(0,4000)}
  if(fields.actual){const evidence=raw.resultEvidence;if(!Number.isFinite(Number(fields.actual))||typeof evidence!=='string'||!b.message.includes(evidence)||!evidence.includes(fields.actual))delete fields.actual;}
  const merged={...b.problem,...fields};
@@ -24,5 +23,5 @@ module.exports=async(req,res)=>{
  const nextStage=ready&&b.stage==='State'?'Observe':ready&&b.stage==='Observe'?'List':b.stage;
  const solutions=['Observe','List'].includes(b.stage)&&Array.isArray(raw.solutions)?raw.solutions.filter(s=>typeof s.name==='string'&&s.name.trim()&&['impact','effort','feasibility'].every(k=>Number.isInteger(s[k])&&s[k]>=1&&s[k]<=5)).slice(0,4).map(s=>({name:s.name.slice(0,500),impact:s.impact,effort:s.effort,feasibility:s.feasibility,rationale:String(s.rationale||'').slice(0,1000)})):[];
  return res.status(200).json({fields,ready,nextStage,solutions,question:typeof raw.question==='string'?raw.question.slice(0,1000):'What would help us understand this better?',summary:typeof raw.summary==='string'?raw.summary.slice(0,1500):'',assumptions:Array.isArray(raw.assumptions)?raw.assumptions.filter(x=>typeof x==='string').slice(0,5):[]});
- }catch{return res.status(502).json({error:'AI is taking too long or returned an incomplete answer. Your notes are still here. Please try again.'})}
+ }catch(error){return res.status(502).json({error:error.publicMessage||'AI is taking too long or returned an incomplete answer. Your notes are still here. Please try again.'})}
 };
