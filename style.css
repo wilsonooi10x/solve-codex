@@ -24,3 +24,4 @@ html{min-height:100%;background:#020a12}body{min-height:100vh}
  .voice-controls>*{min-height:44px}.close{min-width:44px;min-height:44px;flex-shrink:0}
  .modal-head>div{min-width:0}.modal-head h2{overflow-wrap:anywhere}
 }
+.record-result{display:block;margin:16px 0}.validation-missing{color:#c5d8e5;font-size:12px;line-height:1.8;padding-left:20px}.result-confirmation{display:flex;gap:12px;align-items:flex-start;font-size:12px;line-height:1.6}.result-confirmation input{width:20px;margin-top:3px;flex-shrink:0}.decision button:disabled{cursor:not-allowed;opacity:.55}.result-comparison strong{font-size:clamp(16px,3vw,30px);overflow-wrap:anywhere;line-height:1.5}#result-form .row{flex-wrap:wrap}#result-error{color:#ffda87;font-size:12px}
