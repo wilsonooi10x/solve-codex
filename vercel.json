@@ -3,5 +3,13 @@
   "framework": null,
   "installCommand": "",
   "buildCommand": "mkdir -p public/assets && cp index.html app.js style.css workflow.js guided.js sync.js manifest.webmanifest public/ && cp assets/*.png public/assets/",
-  "outputDirectory": "public"
+  "outputDirectory": "public",
+  "functions": {
+    "api/assist.js": {
+      "maxDuration": 60
+    },
+    "api/guide.js": {
+      "maxDuration": 60
+    }
+  }
 }
