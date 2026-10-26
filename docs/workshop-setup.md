@@ -20,7 +20,7 @@ At the end, the facilitator releases OS mode. The usual Overview, Cases and Busi
    | `SOLVE_WORKSHOP_ENABLED` | `true` to enable global workshop controls |
 
 3. Deploy the latest code. Until `SOLVE_WORKSHOP_ENABLED=true`, the ordinary OS and its legacy workshop AI access code keep their existing behavior. When enabled, the initial database row starts with Workshop / Welcome only. Do not enable before completing the database setup.
-4. Open `https://solve-codex.vercel.app/#workshop-admin` privately as facilitator. Enter the admin code. The account password, personal AI key and admin code are separate credentials.
+4. Click **Workshop** in the normal app header, or open `https://solve-codex.vercel.app/#workshop-admin` privately as facilitator. Enter the admin code. The account password, personal AI key and admin code are separate credentials.
 5. Choose Workshop mode and “Welcome only”, then Publish. Participants open the ordinary site URL and sign in/create an account. They do not need an AI key for the workshop.
 6. Select “Through S — State” and Publish to begin. Repeat for Observe, List, Validate, Execute & Evolve. Stage updates usually appear within 15–18 seconds (15-second client polling, up to 3 seconds of CDN caching), or when participants return to the tab. Previously entered work is preserved if controls are moved back to an earlier stage.
 7. At the end choose “Release S.O.L.V.E OS” and Publish. With global controls enabled, the old shared AI access code does **not** spend the organizer's API credit after release. Participants must use their own key; paid access is not enabled yet.

@@ -13,4 +13,5 @@ for(const file of fs.readdirSync(path.join(root,'assets')).filter(name=>name.end
 for(const file of fs.readdirSync(path.join(root,'assets','vendor'))){
  fs.copyFileSync(path.join(root,'assets','vendor',file),path.join(output,'assets','vendor',file));
 }
+fs.copyFileSync(path.join(root,'supabase','workshop.sql'),path.join(output,'workshop.sql'));
 console.log('SOLVE static build ready in public/');
