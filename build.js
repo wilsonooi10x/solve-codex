@@ -4,7 +4,7 @@ const path=require('node:path');
 const root=__dirname;
 const output=path.join(root,'public');
 fs.mkdirSync(path.join(output,'assets','vendor'),{recursive:true});
-for(const file of ['index.html','app.js','style.css','workflow.js','guided.js','questions.js','attachments.js','sync.js','onboarding.js','case-report.js','manifest.webmanifest']){
+for(const file of ['index.html','app.js','style.css','workflow.js','guided.js','attachments.js','sync.js','onboarding.js','case-report.js','manifest.webmanifest']){
  fs.copyFileSync(path.join(root,file),path.join(output,file));
 }
 for(const file of fs.readdirSync(path.join(root,'assets')).filter(name=>name.endsWith('.png'))){
