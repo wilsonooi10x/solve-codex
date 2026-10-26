@@ -2,7 +2,7 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": null,
   "installCommand": "",
-  "buildCommand": "mkdir -p public/assets/vendor && cp index.html app.js style.css workflow.js guided.js attachments.js sync.js onboarding.js case-report.js manifest.webmanifest public/ && cp assets/*.png public/assets/ && cp assets/vendor/* public/assets/vendor/",
+  "buildCommand": "mkdir -p public/assets/vendor && cp index.html app.js style.css workflow.js guided.js questions.js attachments.js sync.js onboarding.js case-report.js manifest.webmanifest public/ && cp assets/*.png public/assets/ && cp assets/vendor/* public/assets/vendor/",
   "outputDirectory": "public",
   "functions": {
     "api/assist.js": {
