@@ -88,3 +88,13 @@ Validation includes model tests for brief-first ordering, assignment/date accura
 ## First-time company setup
 
 New workspaces must enter a company name and HTTPS website or company page before opening a case. Setup saves the details in Business Core 5 and remembers completion; existing profiles with both details skip the popup. Users can then review or extract PVMCP in Business Core 5. Setup itself does not call AI. Completion is stored locally and participates in configured account sync. Signed-in onboarding waits for the initial cloud profile to load. Guest completion applies to this browser; clearing site storage resets it.
+
+## Guided answer evidence and feedback
+
+Overview opens the conversation with “I have a problem to” and a prominent SOLVE button. The guided dialog keeps its stage header sticky, shows a processing spinner while waiting, and highlights/focuses each new AI question. Reduced-motion preferences are respected.
+
+Attach evidence to any guided answer: up to three PDF, DOCX, XLSX, PPTX, CSV, TXT, PNG, JPEG or WebP files, 2 MB each; PDF/image binary inputs must total at most 2 MB. Word paragraphs, spreadsheet cell values (including shared strings) and PowerPoint slide text are extracted locally using bundled fflate. Embedded Office pictures, charts, formatting and formula recalculation are not read; export relevant pages as PDF or pictures for visual evidence. Extracted text is limited to 20,000 characters per file and 40,000 per answer, with archive expansion limits. Older DOC/XLS/PPT files must be exported to PDF or modern Office formats.
+
+PDFs and images use native Claude/OpenAI multimodal inputs. Evidence is sent only on Continue with the existing workshop access code. Server validation checks types, binary signatures and size bounds. Filenames and extracted Office/text content are saved in the conversation and included in case reports and configured account sync; original binaries remain in dialog memory only and are not retained across page reloads or case switches. Failed requests retain pending files for retry while the dialog remains loaded. Reattach PDF/image originals if needed in a later turn. Pilot actuals still require explicit user-provided results and the owner's decision. Recent AI history is bounded separately from the full stored/exported conversation.
+
+Verification covers provider payloads and server limits with mocked AI responses, plus Chromium checks of Office extraction, file submission, processing/new-question feedback and sticky progress at phone/desktop sizes. Live attachment interpretation requires a working deployed AI provider and was not exercised with paid credentials here.
