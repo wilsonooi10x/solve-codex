@@ -7,7 +7,7 @@
  function done(){return Boolean(business.onboarding?.completedAt)||hasProfile()}
  function markExisting(){if(!business.onboarding?.completedAt&&hasProfile()){const p=details();business={...business,company:p.company.trim(),website:validWebsite(p.website),onboarding:{version:1,completedAt:new Date().toISOString(),source:'existing-profile'}};saveBusiness()}}
  function schedule(){if(scheduled)return;scheduled=true;setTimeout(()=>{scheduled=false;check()},0)}
- function check(){const state=window.SolveWorkspace;if(!state?.ready)return;
+ function check(){if(window.SolveWorkshop&&(!SolveWorkshop.ready||SolveWorkshop.mode==='workshop'||location.hash==='#workshop-admin')){document.querySelector('#company-onboarding[open]')?.close();return}const state=window.SolveWorkspace;if(!state?.ready)return;
  const current=document.querySelector('#company-onboarding');
  if(done()){markExisting();if(current?.open)current.close();if(pendingAction){const next=pendingAction;pendingAction=null;next()}return}
  if(state.accountId&&!state.loaded)return; // Never replace a profile that is still loading from cloud.

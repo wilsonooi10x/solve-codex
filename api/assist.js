@@ -1,15 +1,10 @@
 const website=require('../lib/website');
 const ai=require('../lib/ai');
-const crypto = require('node:crypto');
 const fields=['title','why','current','impact','statement','leakage','why0','why1','why2','why3','why4','root','solution0','solution1','solution2','solution3','solution4','chosen','how','metric','expected','method','execution','executionHow','target','learning','company','purpose','vision','mission','values','positioning'];
 module.exports=async function(req,res){
  res.setHeader('Cache-Control','no-store');
  if(req.method!=='POST')return res.status(405).json({error:'Use POST.'});
- const code=process.env.SOLVE_ACCESS_CODE;
- if(!ai.configured()||!code)return res.status(503).json({error:'AI is not activated yet. The workspace owner must add ANTHROPIC_API_KEY and SOLVE_ACCESS_CODE in Vercel environment variables, then redeploy. You can still type and save manually.'});
- const supplied=String(req.headers['x-solve-code']||'');
- const hash=s=>crypto.createHash('sha256').update(s).digest();
- if(!crypto.timingSafeEqual(hash(supplied),hash(code)))return res.status(401).json({error:'Enter the AI access code provided by your workshop leader.'});
+ const access=await require('../lib/access').authorize(req,res);if(!access)return;
  let body=req.body;
  if(typeof body==='string'){try{body=JSON.parse(body)}catch{return res.status(400).json({error:'Invalid request.'})}}
  if(!body||!['problem','business'].includes(body.mode)||typeof body.text!=='string'||body.text.length<3||body.text.length>12000)return res.status(400).json({error:'Provide between 3 and 12,000 characters.'});
@@ -26,7 +21,7 @@ module.exports=async function(req,res){
  const businessKeysForSchema=['company','purpose','vision','mission','values','positioning'];const str={type:'string'};const source={type:'object',properties:{url:str,quote:str},required:['url','quote'],additionalProperties:false};const map=keys=>({type:'object',properties:Object.fromEntries(keys.map(k=>[k,str])),required:keys,additionalProperties:false});
  const schema=body.mode==='business'?{type:'object',properties:{fields:map(businessKeysForSchema),suggestions:map(businessKeysForSchema.slice(1)),evidence:{type:'object',properties:Object.fromEntries(businessKeysForSchema.slice(1).map(k=>[k,source])),required:businessKeysForSchema.slice(1),additionalProperties:false},sources:{type:'array',items:source},summary:str,questions:{type:'array',items:str},assumptions:{type:'array',items:str}},required:['fields','suggestions','evidence','sources','summary','questions','assumptions'],additionalProperties:false}:undefined;
  const directInstruction=body.mode==='business'?' You already have the retrieved page text below. Use ONLY this text; do not use web search or claim to have browsed elsewhere. Each evidence quote must match the supplied text verbatim, and its URL must be one of the supplied page URLs. The sourceMode indicates website retrieval or user-pasted text. Acknowledge pasted text as user-provided, not independently verified. Draft missing elements as suggestions only when supported by this content. ':'';
- const parsed=await ai.generate({instructions:prompt+directInstruction,input:body.mode==='business'?JSON.stringify({website:body.text,sourceMode,pages}):body.text,schema,search:false,maxTokens:4000});
+ const parsed=await ai.generate({instructions:prompt+directInstruction,input:body.mode==='business'?JSON.stringify({website:body.text,sourceMode,pages}):body.text,schema,search:false,maxTokens:4000,...access});
  const clean={};for(const k of fields)if(typeof parsed.fields?.[k]==='string')clean[k]=parsed.fields[k].slice(0,5000);
  const strings=a=>Array.isArray(a)?a.filter(x=>typeof x==='string').slice(0,6):[];
  const businessKeys=['purpose','vision','mission','values','positioning'];
