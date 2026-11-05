@@ -109,3 +109,5 @@ Overview is an uncluttered starting page with the SOLVE launch button, Engineeri
 ## Facilitator workshop mode
 
 See [Workshop setup](docs/workshop-setup.md) for the manual, signed-in worksheet, shared stage controls, server-side AI lock, end-of-session OS release and personal Claude/OpenAI connections. Production activation requires the workshop SQL migration and server environment settings; existing OS behavior remains the default until enabled. Stripe purchasing and payment-derived credits are pending and are not offered to participants yet.
+
+The facilitator page includes an admin-code-protected **Run small OpenAI test** action. It uses the server OpenAI key for a fixed, bounded sample request without unlocking participant AI or altering workshop controls. See the workshop guide for usage and cost details.

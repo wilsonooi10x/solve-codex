@@ -10,6 +10,9 @@
     },
     "api/guide.js": {
       "maxDuration": 60
+    },
+    "api/workshop.js": {
+      "maxDuration": 60
     }
   }
 }

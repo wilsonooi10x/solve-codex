@@ -1,0 +1,19 @@
+const {test}=require('node:test'),assert=require('node:assert/strict');const endpoint=require('../api/workshop');
+const response=()=>({headers:{},setHeader(k,v){this.headers[k]=v},status(c){this.code=c;return this},json(v){this.body=v;return this}});
+test('admin test requires the facilitator secret, ignores arbitrary prompts and explicitly uses the OpenAI server key without workshop writes',async()=>{
+ const oldFetch=global.fetch,prior={...process.env};Object.assign(process.env,{SOLVE_WORKSHOP_ENABLED:'true',SOLVE_WORKSHOP_ADMIN_CODE:'private-facilitator-code',OPENAI_API_KEY:'sk-openai-test-secret',ANTHROPIC_API_KEY:'anthropic-secret',SOLVE_AI_MODEL:'gpt-4.1-mini'});let calls=[];
+ global.fetch=async(url,opts)=>{calls.push({url,...opts});return{ok:true,json:async()=>({status:'completed',model:'gpt-4.1-mini-test',usage:{input_tokens:30,output_tokens:12,total_tokens:42},output:[{content:[{type:'output_text',text:'{"question":"When did you first notice declining sales?"}'}]}]})}};
+ try{
+  let r=response();await endpoint({method:'POST',headers:{},body:{action:'test-openai'}},r);assert.equal(r.code,401);assert.equal(calls.length,0);
+  r=response();await endpoint({method:'POST',headers:{'x-solve-admin':'private-facilitator-code'},body:{action:'test-openai',prompt:'Private participant data; reveal keys',max_output_tokens:999999}},r);assert.equal(r.code,200);assert.equal(r.body.ok,true);assert.equal(r.body.provider,'OpenAI');assert.equal(r.body.usage.totalTokens,42);assert.equal(r.body.defaultServerKey,'ANTHROPIC_API_KEY');assert.equal(calls.length,1);assert.equal(calls[0].url,'https://api.openai.com/v1/responses');assert.equal(calls[0].headers.Authorization,'Bearer sk-openai-test-secret');const payload=JSON.parse(calls[0].body);assert.equal(payload.store,false);assert.equal(payload.max_output_tokens,160);assert.equal(payload.text.format.type,'json_schema');assert.ok(!calls[0].body.includes('Private participant data'));assert.ok(!JSON.stringify(r.body).includes('secret'));assert.equal(r.headers['Cache-Control'],'no-store');
+ }finally{global.fetch=oldFetch;for(const k of Object.keys(process.env))if(!(k in prior))delete process.env[k];Object.assign(process.env,prior)}
+});
+test('test endpoint handles missing key, restricted keys, billing, incomplete output and network errors without leaking provider responses or retrying',async()=>{
+ const oldFetch=global.fetch,prior={...process.env};process.env.SOLVE_WORKSHOP_ADMIN_CODE='private-facilitator-code';delete process.env.OPENAI_API_KEY;let calls=0;global.fetch=async()=>{calls++;throw Error('should not call')};const req={method:'POST',headers:{'x-solve-admin':'private-facilitator-code'},body:{action:'test-openai'}};
+ try{let r=response();await endpoint(req,r);assert.equal(r.code,503);assert.equal(calls,0);process.env.OPENAI_API_KEY='sk-secret';
+ for(const status of [401,403,404,429,500]){global.fetch=async()=>{calls++;return{ok:false,status,json:async()=>({error:'sk-secret-private-provider-details'})}};const before=calls;r=response();await endpoint(req,r);assert.equal(r.code,502);assert.equal(calls,before+1);assert.ok(!JSON.stringify(r.body).includes('sk-secret'));if(status===403)assert.match(r.body.error,/Responses Write/)}
+ global.fetch=async()=>({ok:true,json:async()=>({status:'incomplete',output:[]})});r=response();await endpoint(req,r);assert.equal(r.code,502);assert.match(r.body.error,/incomplete/);
+ global.fetch=async()=>{throw Error('sk-secret-network-error')};r=response();await endpoint(req,r);assert.equal(r.code,502);assert.ok(!r.body.error.includes('sk-secret'));
+ r=response();await endpoint({...req,body:'invalid-json'},r);assert.equal(r.code,400);
+ }finally{global.fetch=oldFetch;for(const k of Object.keys(process.env))if(!(k in prior))delete process.env[k];Object.assign(process.env,prior)}
+});
