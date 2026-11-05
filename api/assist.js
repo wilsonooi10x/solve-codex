@@ -4,7 +4,7 @@ const fields=['title','why','current','impact','statement','leakage','why0','why
 module.exports=async function(req,res){
  res.setHeader('Cache-Control','no-store');
  if(req.method!=='POST')return res.status(405).json({error:'Use POST.'});
- const access=await require('../lib/access').authorize(req,res);if(!access)return;
+ const access=await require('../lib/access').authorize(req,res);if(!access)return;if(access.trialAuth)return res.status(403).json({error:'Trial credits cover text-only guided Continue turns. Website and document analysis need a personal API connection; paid analysis is not enabled yet.'});
  let body=req.body;
  if(typeof body==='string'){try{body=JSON.parse(body)}catch{return res.status(400).json({error:'Invalid request.'})}}
  if(!body||!['problem','business'].includes(body.mode)||typeof body.text!=='string'||body.text.length<3||body.text.length>12000)return res.status(400).json({error:'Provide between 3 and 12,000 characters.'});

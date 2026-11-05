@@ -4,7 +4,7 @@ const path=require('node:path');
 const root=__dirname;
 const output=path.join(root,'public');
 fs.mkdirSync(path.join(output,'assets','vendor'),{recursive:true});
-for(const file of ['index.html','app.js','style.css','workflow.js','guided.js','attachments.js','sync.js','onboarding.js','access.js','workshop.js','case-report.js','manifest.webmanifest']){
+for(const file of ['index.html','app.js','style.css','workflow.js','guided.js','attachments.js','sync.js','onboarding.js','access.js','workshop.js','credits.js','case-report.js','manifest.webmanifest']){
  fs.copyFileSync(path.join(root,file),path.join(output,file));
 }
 for(const file of fs.readdirSync(path.join(root,'assets')).filter(name=>name.endsWith('.png'))){
@@ -14,4 +14,5 @@ for(const file of fs.readdirSync(path.join(root,'assets','vendor'))){
  fs.copyFileSync(path.join(root,'assets','vendor',file),path.join(output,'assets','vendor',file));
 }
 fs.copyFileSync(path.join(root,'supabase','workshop.sql'),path.join(output,'workshop.sql'));
+fs.copyFileSync(path.join(root,'supabase','credits.sql'),path.join(output,'credits.sql'));
 console.log('SOLVE static build ready in public/');

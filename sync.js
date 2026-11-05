@@ -2,7 +2,7 @@
 (function(){
  if(/(?:access_token|refresh_token)=/.test(location.hash))history.replaceState(null,'',location.pathname+location.search);
  let config=null,session=null,state=null,running=false,timer=null,lastError='',lastSaved='',initialising=true,workspaceLoaded=false,lastWorkspaceSignal='';
- window.SolveWorkspace={ready:false,loaded:false,accountId:null,cloudConfigured:false};
+ window.SolveWorkspace={ready:false,loaded:false,accountId:null,cloudConfigured:false};window.SolveAccount={getToken:token};
  function announceWorkspace(){const detail={ready:!initialising,loaded:session?workspaceLoaded:!initialising,accountId:session?.user?.id||null,cloudConfigured:Boolean(config)};window.SolveWorkspace=detail;const signature=JSON.stringify(detail);if(signature!==lastWorkspaceSignal){lastWorkspaceSignal=signature;window.dispatchEvent(new CustomEvent('solve-workspace-ready',{detail}))}}
  const read=(k,f)=>{try{return JSON.parse(localStorage.getItem(k))||f}catch{return f}};
  const copy=x=>JSON.parse(JSON.stringify(x));

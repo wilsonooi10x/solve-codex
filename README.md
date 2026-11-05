@@ -111,3 +111,7 @@ Overview is an uncluttered starting page with the SOLVE launch button, Engineeri
 See [Workshop setup](docs/workshop-setup.md) for the manual, signed-in worksheet, shared stage controls, server-side AI lock, end-of-session OS release and personal Claude/OpenAI connections. Production activation requires the workshop SQL migration and server environment settings; existing OS behavior remains the default until enabled. Stripe purchasing and payment-derived credits are pending and are not offered to participants yet.
 
 The facilitator page includes an admin-code-protected **Run small OpenAI test** action. It uses the server OpenAI key for a fixed, bounded sample request without unlocking participant AI or altering workshop controls. See the workshop guide for usage and cost details.
+
+## Shared 10XSC trial allowances
+
+See [Trial credit setup and accounting](docs/trial-credits.md). Shared text-only turns now support verified account ownership, approval-only one-time 100-turn ceilings, configurable per-account/event API cost budgets, transactional reservations and retry-safe result replay. The migration starts disabled with zero budgets/rates; production activation and price verification are required. Paid Stripe top-ups remain disabled.

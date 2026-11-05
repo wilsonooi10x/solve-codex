@@ -13,6 +13,9 @@
     },
     "api/workshop.js": {
       "maxDuration": 60
+    },
+    "api/credits.js": {
+      "maxDuration": 60
     }
   }
 }
