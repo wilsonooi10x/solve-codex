@@ -39,4 +39,4 @@ The tests run the migration and accounting functions against embedded PostgreSQL
 
 Production SQL activation, live Supabase/OpenAI accounting, current price verification, representative full-case cost measurement and a 200–300 participant load test still need an organizer-led rehearsal. No live paid requests or production migrations were run by this development environment.
 
-**Stripe payment packages, checkout and automatic paid credit fulfilment remain unimplemented and disabled.** There is no purchase entitlement or cash balance in this migration. A paid wallet should use a separately reviewed, idempotent Stripe webhook and pricing model rather than treating a checkout redirect as proof of payment.
+**This migration remains trial-only.** A separate [Stripe Sandbox integration](stripe-sandbox.md) now supports test checkout and verified, idempotent delivery into a separate paid wallet after additional setup. Live payments remain unsupported. A checkout redirect never proves payment.

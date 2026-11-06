@@ -16,6 +16,12 @@
     },
     "api/credits.js": {
       "maxDuration": 60
+    },
+    "api/payments.js": {
+      "maxDuration": 60
+    },
+    "api/stripe-webhook.js": {
+      "maxDuration": 60
     }
   }
 }

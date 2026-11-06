@@ -115,3 +115,7 @@ The facilitator page includes an admin-code-protected **Run small OpenAI test** 
 ## Shared 10XSC trial allowances
 
 See [Trial credit setup and accounting](docs/trial-credits.md). Shared text-only turns now support verified account ownership, approval-only one-time 100-turn ceilings, configurable per-account/event API cost budgets, transactional reservations and retry-safe result replay. The migration starts disabled with zero budgets/rates; production activation and price verification are required. Paid Stripe top-ups remain disabled.
+
+## Stripe Sandbox purchases
+
+Signed-in named testers can purchase a Sandbox RM20 / 100 text-reply package from **Credits / Buy replies**. Follow [Stripe Sandbox setup](docs/stripe-sandbox.md), including the additional paid-wallet SQL migration, signed webhook, Vercel variables and paid testing budget. Trial and purchased replies are separate. Live keys/payments are deliberately unsupported; no real purchase should be offered yet.
