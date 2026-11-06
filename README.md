@@ -119,3 +119,5 @@ See [Trial credit setup and accounting](docs/trial-credits.md). Shared text-only
 ## Stripe Sandbox purchases
 
 Signed-in named testers can purchase a Sandbox RM20 / 100 text-reply package from **Credits / Buy replies**. Follow [Stripe Sandbox setup](docs/stripe-sandbox.md), including the additional paid-wallet SQL migration, signed webhook, Vercel variables and paid testing budget. Trial and purchased replies are separate. Live keys/payments are deliberately unsupported; no real purchase should be offered yet.
+
+Business Core 5 website or pasted-text extraction can use the selected 10XSC trial or purchased credit. A usable extraction uses one action; failed analysis refunds it. Existing account/event budgets, replay protection and review of sourced statements still apply. Attachments and generic drafting continue to require a personal provider connection.

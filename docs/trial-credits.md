@@ -1,6 +1,6 @@
 # 10XSC trial allowance
 
-The trial has three simultaneous limits: a one-time maximum of **100 successful text-only guided turns per eligible account**, a USD cost allowance per account, and a total event cost budget. Usage stops at whichever limit is reached first. These are app-managed API cost estimates, not cash, prepaid OpenAI balances or a guarantee that every account can complete 100 turns. No monetary amounts or model rates are selected automatically.
+The trial has three simultaneous limits: a one-time maximum of **100 successful guided text replies or Business Core 5 extractions per eligible account**, a USD cost allowance per account, and a total event cost budget. Usage stops at whichever limit is reached first. These are app-managed API cost estimates, not cash, prepaid OpenAI balances or a guarantee that every account can complete 100 turns. No monetary amounts or model rates are selected automatically.
 
 ## Activation (required, intentionally off by default)
 
@@ -15,7 +15,7 @@ The trial has three simultaneous limits: a one-time maximum of **100 successful 
 ## Exactly what is metered
 
 - One successfully processed `/api/guide` response uses one turn and its conservatively estimated API cost. The response contains a single next question and the existing structured SOLVE fields. Larger histories remain stored/exportable; AI receives the already bounded case context. Trial outputs are capped at 1,800 tokens, with a 25-second provider timeout.
-- Trial requests are text-only. Uploaded files and website/business extraction through `/api/assist` are refused for shared trial access **before** a provider or website request. Those actions still work with a participant's personal API connection. Manual worksheets, storage/sync and local PDF downloads remain free.
+- Business Core 5 website or pasted-company-text extraction through `/api/assist` also uses one trial turn and the account/event cost allowance. It uses the same wallet ledger and replay protection as guided replies. Generic drafting and uploaded attachments still require a personal API connection. Manual worksheets, storage/sync and local PDF downloads remain free.
 - JWTs are checked with Supabase Auth. The server chooses the wallet owner from the verified identity, never from a participant-supplied ID. Browser balances are informational, never authoritative. Refreshing an expired token uses the app's existing account refresh flow.
 - PostgreSQL transactions reserve a participant turn plus account/event budget before calling OpenAI. There is at most one in-flight trial call per account and six accepted attempts per minute. Budget rows and wallet rows are locked in a consistent order, so simultaneous requests cannot reserve the same balance twice.
 - The initial cost reservation uses an intentionally generous input-token upper bound (serialized request UTF-8 size plus overhead) and the maximum output allowance. This can prevent a long turn even when its eventual actual cost might have been lower. Use a shorter update or a personal connection; do not promise 100 turns irrespective of budget.
@@ -40,3 +40,11 @@ The tests run the migration and accounting functions against embedded PostgreSQL
 Production SQL activation, live Supabase/OpenAI accounting, current price verification, representative full-case cost measurement and a 200–300 participant load test still need an organizer-led rehearsal. No live paid requests or production migrations were run by this development environment.
 
 **This migration remains trial-only.** A separate [Stripe Sandbox integration](stripe-sandbox.md) now supports test checkout and verified, idempotent delivery into a separate paid wallet after additional setup. Live payments remain unsupported. A checkout redirect never proves payment.
+
+## Business Core 5 extraction
+
+Website or pasted-text extraction now uses the selected trial or purchased allowance, with one action deducted only for a usable Business Core 5 result. No additional SQL or Stripe configuration is required after the existing wallet migrations. The client persists a separate tracked request with the Business Core draft. Server fingerprints include the operation so an extraction cannot replay a guided reply. A successful retry returns the same analysis without reading the website again or charging another action.
+
+Wallet eligibility, rate limits and a conservative 100,000-input / 1,800-output-token reservation are checked **before** reading a website. At most three pages and 16,000 characters in total are provided to AI; the fully serialized provider input is checked against the reservation before any provider request. A blocked website refunds the action with zero provider cost and does not pause the pool. Failed/empty AI analyses refund the action; any actual/possible provider cost remains against the organiser pool. As with guide failures, unknown provider usage pauses that pool. A usable partial result still uses one action and must be reviewed. Exact quote/source validation and extracted-versus-suggested labels remain in force.
+
+The generous input reservation may prevent an extraction when the remaining USD allowance is too small, even if actual eventual token usage might cost less. It never bypasses the configured trial or paid pool. Website retrieval adds up to twelve seconds before the existing provider timeout. Saved manual company fields are not overwritten by analysis; the user applies or saves a reviewed draft.
