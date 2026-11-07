@@ -7,8 +7,8 @@ List uses the same scoring function in both modes. Balanced sums the three crite
 ## Three milestones
 
 1. **Planning session complete**: a reviewed pilot with what/how, decision owner, PIC, due date, outcome/metric, success criterion and measurement method. Real results remain blank. Participants can finish this within the hackathon and export a short action brief. They may prepare an optional conditional E draft without leaving Validate or asserting that rollout has been approved.
-2. **Pilot evidence ready for an owner decision**: after actually testing, the user records expected versus actual and evidence, confirms that the action happened, then decides Adopt at the tested scope, Improve/retest, Stop, or Move to scale. These are different decisions. An improvement cycle retains previous trial history. The app does not generate evidence for a workshop participant merely to advance a progress bar.
-3. **Execution reviewed and cycle closed**: wider rollout needs recorded pilot evidence, an owner Move to scale decision and reason, and a separately confirmed execution plan. E setup finishes explicitly; the next action is to execute and return on a calendar review date. The user then records actual KPI outcomes and learning, confirms the review happened, and chooses adjust/continue or close the cycle. Closing is labelled **Closed**, not an automatic claim of success or proof of causation.
+2. **Pilot evidence ready for an owner decision**: after actually testing, the user records expected versus actual and evidence, confirms that the action happened, then decides Adopt at the tested scope, Improve/retest, Stop, or Scale. These are different decisions. An improvement cycle retains previous trial history. The app does not generate evidence for a workshop participant merely to advance a progress bar.
+3. **Execution reviewed and cycle closed**: execution at the tested scope (Adopt) or wider rollout (Scale) needs recorded pilot evidence, an owner decision and reason, and a separately confirmed execution plan. E setup finishes explicitly; the next action is to execute and return on a calendar review date. The user then records actual KPI outcomes and learning, confirms the review happened, and chooses adjust/continue or close the cycle. Closing is labelled **Closed**, not an automatic claim of success or proof of causation.
 
 ## Workshop and guided behaviour
 
@@ -31,3 +31,9 @@ Automated tests verify the manual/AI field contract, common matrix scoring, plan
 Run a real end-to-end rehearsal with a few entrepreneurs before the event: confirm a plan with no test results, reopen it on a second signed-in device, record a genuine completed test, review the owner decision, confirm E, and record/close an outcome. Evaluate whether each option addresses the working cause and whether the pilot measures a business/behaviour outcome rather than only an activity count (e.g. training videos produced).
 
 No new SQL, Stripe configuration, AI model or payment change is required. Existing saved cases remain available. Live Stripe remains outside this change.
+
+## Clear actions and stage revisions
+
+V shows only the action appropriate to preparation, pilot running, or evidence/decision. Advanced drafting and corrections sit under Other actions. Adopt implements at the tested scope; Scale expands scope. Both open the E form with explicit calendar date inputs. Improve opens a revised pilot form and preserves earlier evidence in trial history; Stop closes the approach and offers alternative options. Confirmed E setup removes repeated confirmation and offers a handover download, close-for-now, and a later outcome review.
+
+The Revisit control separates inspecting saved fields from explicitly starting an earlier-stage revision. Revision snapshots retain the earlier record; actual results and later approvals are invalidated for the revised path rather than reused as proof. Full PDF includes these snapshots. S/O checkpoints review known facts and uncertainties, not a user certification of causal competence. A coaching action challenges the framing and alternative causes using the captured context.
