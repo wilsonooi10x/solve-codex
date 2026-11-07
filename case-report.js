@@ -19,6 +19,7 @@
  if(p.pilotStarted)return [[p.how?'Run the pilot and report actual results.\n'+p.how:'Run the agreed pilot and record the result.',p.pic||'Not assigned',p.due||'Not set','Pilot in progress']];
  return [[p.how?'Confirm the pilot plan before starting.\n'+p.how:'Define and confirm a small pilot.',p.owner||'Not assigned',p.due||'Not set','Planning; test not yet confirmed']];
  }
+ if(['State','Observe','List'].includes(p.stage)&&p.executive?.proposedActions?.length)return p.executive.proposedActions.map(action=>[action,'Not assigned','Not set','AI proposal; confirm owner, timing and evidence']);
  const action={State:'Clarify the problem, current situation and impact.',Observe:'Gather observations and check the working root cause.',List:'Compare solutions and choose one to pilot.'}[p.stage]||'Confirm the next action.';
  return [[action,p.pic||'Not assigned',p.due||'Not set','Workflow next step; confirm assignment']];
  }
@@ -29,9 +30,11 @@
  const section=(name,keys)=>{add('heading',name);const found=keys.filter(k=>present(p[k]));if(!found.length)add('body','Not recorded.');found.forEach(k=>row(labels[k]||k,p[k]))};
  add('title',p.title||'Untitled case');add('body',`PIC HANDOVER BRIEF · Exported ${timeLabel(at)}`);
  add('heading','1. Context at a glance');
- const context=[['Case ID / stage / status',`${p.id||'Not recorded'} · ${p.stage||'Not recorded'} · ${p.status||'Not recorded'}`],['Problem / context',p.statement||p.current||p.why||p.title||'Not recorded'],['Why it matters',p.impact||p.why||'Not recorded'],['PIC / decision owner',`${p.pic||'PIC not assigned'} / ${p.owner||'Owner not assigned'}`]];
+ const context=[['Case ID / stage / status',`${p.id||'Not recorded'} · ${p.stage||'Not recorded'} · ${p.status||'Not recorded'}`],['Problem / context',p.executive?.goal||p.statement||p.current||p.why||p.title||'Not recorded'],['Why it matters',p.impact||p.why||'Not recorded'],['PIC / decision owner',`${p.pic||'PIC not assigned'} / ${p.owner||'Owner not assigned'}`]];
  if(p.chosen)context.push(['Selected approach',p.chosen]);if(p.decision)context.push(['Latest decision / reason',[p.decision,p.reason].filter(Boolean).join(' — ')]);
  table(['Reference','Recorded context'],context,[.23,.77]);
+ if(p.executive?.recommendation)row('Working recommendation — review required',p.executive.recommendation);
+ if(p.executive?.evidenceGaps?.length)row('Evidence gaps — assign checks before committing',p.executive.evidenceGaps.join('\n'));
  add('heading','2. Next actions — who does what by when');table(['What to do / how','Who','By when','Status / note'],nextActions(p),[.43,.17,.16,.24]);
  add('note','People and dates are recorded values. Agree any missing assignments or dates; workflow next steps are guidance.');
  add('heading','3. Targets, evidence and review');
@@ -45,6 +48,7 @@
  add('note',options.briefOnly?'PIC brief only. The full case PDF contains the worksheet, trial history, conversations and change log.':'The PIC brief ends here. Print these opening pages for handover; Appendix A onwards contains the supporting record.');
  if(options.briefOnly)return out;
  appendix('Appendix A — Full SOLVE worksheet');
+ if(p.executive){add('heading','Executive decision brief');row('Original problem',p.executive.originalGoal);row('Current decision focus',p.executive.goal);row('User-reported facts — not independently verified',p.executive.facts);row('Possible causes — unverified',p.executive.hypotheses);row('Proposed evidence tasks — ownership/timing not confirmed',p.executive.proposedActions);row('Working brief acknowledgements',p.executiveReviews);}
  section('Case reference',['stage','status','owner','pic','due']);section('S — State',['why','current','impact','statement']);section('O — Observe',['leakage','why0','why1','why2','why3','why4','root']);
  add('heading','L — List');(p.solutions||[]).forEach((s,i)=>{add('subheading',`${i+1}. ${s.name||'Option'}`);row('Impact / ease of effort / feasibility (1–5)',`${s.impact??'—'} / ${s.effort??'—'} / ${s.feasibility??'—'}`);row('Rationale',s.rationale)});row('Chosen solution and rationale',p.chosen);
  section('V — Validate',['how','pilotStarted','resultType','metric','expected','actual','method','feedback','resultConfirmedAt','decision','reason']);section('E — Execute & Evolve',['execution','executionHow','target','owner','pic','due','learning','review']);for(let i=0;i<3;i++)if([p['kpi'+i],p['target'+i],p['result'+i],p['measurement'+i]].some(present)){add('subheading',`Execution KPI ${i+1}`);row('KPI',p['kpi'+i]);row('Target',p['target'+i]);row('Actual',p['result'+i]);row('Measurement method',p['measurement'+i])}
