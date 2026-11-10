@@ -109,3 +109,6 @@ function setupBusinessCore(){
  }catch(e){if(account===localStorage.getItem('solve-active-account')&&sequence===coreRequestSequence&&f.isConnected)status.textContent=e.name==='AbortError'?'Website analysis took too long. Your draft is retained. Try the About page or paste company text.':e.message}finally{clearTimeout(timeout);button.disabled=false;window.dispatchEvent(new Event('solve-credit-balance-changed'))}
  };
 }
+
+// Keep manual stage tabs below the banner at its original responsive size.
+(function(){const banner=document.querySelector('.event-masthead');if(!banner)return;const update=()=>document.documentElement.style.setProperty('--hackathon-banner-height',Math.ceil(banner.getBoundingClientRect().height)+'px');update();if(window.ResizeObserver)new ResizeObserver(update).observe(banner);else window.addEventListener('resize',update);banner.querySelector('img')?.addEventListener('load',update);})();
