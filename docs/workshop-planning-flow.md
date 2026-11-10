@@ -61,3 +61,7 @@ V now offers **Edit test details** at each substep: correct one field, starting 
 ## Grounded State-to-Observe transition
 
 S progression now requires exact user-source quotes for the affected scope, a concrete observable gap/example and business impact, plus a specific assessment. A long AI-written paraphrase or inferred impact cannot satisfy that gate. Generic judgements such as “manager not performing” keep the coach in S and trigger one example question. Concrete qualitative observations count; numbers and dates are not compulsory. A sufficiently detailed first answer can still advance without a fixed minimum question count. Valid quotes persist with the case and travel in bounded context; revising S clears them. Missing quotes prevent generated current-situation/impact details from being accepted as completed S evidence.
+
+## Compare saved alternatives after a completed cycle
+
+The terminal Compare alternative options action now directly returns to List with the saved scores/options, without a hidden revision confirmation or a model call. It marks the previous selection, retains completed outcomes and execution cycles in history, and clears active downstream plans/results/approvals so the next option starts a fresh test. Reopening preserves the comparison screen. If no saved options exist, the UI says so and invites ideas/suggestions. General List revisions also show saved options immediately rather than asking for the same options again.
