@@ -65,3 +65,7 @@ S progression now requires exact user-source quotes for the affected scope, a co
 ## Compare saved alternatives after a completed cycle
 
 The terminal Compare alternative options action now directly returns to List with the saved scores/options, without a hidden revision confirmation or a model call. It marks the previous selection, retains completed outcomes and execution cycles in history, and clears active downstream plans/results/approvals so the next option starts a fresh test. Reopening preserves the comparison screen. If no saved options exist, the UI says so and invites ideas/suggestions. General List revisions also show saved options immediately rather than asking for the same options again.
+
+## Question navigation in V/E
+
+The sticky header uses View question in every active stage. It scrolls to the visible current-question card, measured below the actual header, rather than jumping to the answer input and hiding the prompt. Framework V/E changes (including local date saves and result/plan confirmation) trigger the same question reveal as model replies. Optional answer-focus controls keep their distinct behavior.
