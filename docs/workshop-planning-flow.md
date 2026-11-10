@@ -69,3 +69,7 @@ The terminal Compare alternative options action now directly returns to List wit
 ## Question navigation in V/E
 
 The sticky header uses View question in every active stage. It scrolls to the visible current-question card, measured below the actual header, rather than jumping to the answer input and hiding the prompt. Framework V/E changes (including local date saves and result/plan confirmation) trigger the same question reveal as model replies. Optional answer-focus controls keep their distinct behavior.
+
+## Plain-language credits screen
+
+The participant wallet now separates free credits and purchased Sandbox test credits, defines one credit in one sentence, and states the selected source for the next AI reply. Technical dollar allowances, pending counts and account ID are collapsed under Usage details. Free-use budget exhaustion remains visible even when the turn count is positive. Sandbox labels and no-real-payment wording remain prominent. This changes presentation only; reservations, budgets, checkout verification and funding selection remain unchanged.

@@ -65,3 +65,7 @@ header{gap:8px;flex-wrap:wrap;height:auto;min-height:88px;padding:12px 0}.app-he
 #guided-session button:not(.primary):not(.text-button):not(.close){background:#0a2b43;color:#e3edf5;border:1px solid #54748c}.coach-summary{border-top:1px solid #35536c;padding-top:12px;font-size:12px}.executive-brief>summary{cursor:pointer}
 
 #framework-result-confirm{display:inline-block;width:auto;margin:0 8px 0 0;vertical-align:middle}#edit-test-detail-form select{margin-bottom:12px}
+
+#trial-wallet .credit-balance-card{padding:16px;border:1px solid #35576e;border-radius:10px;margin:14px 0;background:#0a2941}#trial-wallet .credit-balance-card h3{margin:0 0 8px}#trial-wallet .credit-count{font-size:22px;font-weight:700;color:#ffda87;line-height:1.4;margin:8px 0}#trial-wallet .credit-test-label{display:inline-block;font-size:10px;letter-spacing:1px;padding:4px 7px;border:1px solid #a17e36;border-radius:5px;vertical-align:middle}#trial-wallet .credit-source button{padding:10px 14px;border:1px solid #54748c;border-radius:7px;background:#0a2b43;color:#e3edf5}#trial-wallet .credit-source button[aria-pressed="true"]{background:var(--gold);color:#092234}#trial-wallet details{margin:16px 0}#trial-wallet summary{cursor:pointer;color:#ffda87}#wallet-technical{white-space:pre-line;overflow-wrap:anywhere}
+
+#trial-wallet #paid-wallet-panel{border:0;padding-top:0;margin-top:14px}
