@@ -78,7 +78,7 @@
   }
   if(stage==='List')return {key:'solutions',question:'What possible solutions would you consider? You can share your ideas or ask me to suggest options.'};
   if(stage==='Validate'){
-   if(p.pilotStarted){if(!has('actual'))return {key:'actual',question:'What actually happened in the test, compared with the expected result?'};if(!has('feedback'))return {key:'feedback',question:'What did you observe or measure that supports this result?'};return {key:'decision',question:'Based on the result, will you Adopt, Improve, Scale or Stop?'};}
+   if(p.pilotStarted){if(has('actual')&&!p.resultConfirmedAt)return {key:'result-confirm',question:'Review and confirm your reported test result, then choose the next action.'};if(!has('actual'))return {key:'actual',question:'What actually happened in the test, compared with the expected result?'};if(!has('feedback'))return {key:'feedback',question:'What did you observe or measure that supports this result?'};return {key:'decision',question:'Based on the result, will you Adopt, Improve, Scale or Stop?'};}
    const questions={how:'What is the smallest practical test of this solution?',metric:'What outcome will you measure?',expected:'What result would count as success?',method:'How will you measure that result?',pic:'Who will carry out the test?',owner:'Who will make the decision after the test?',due:'When will the test be completed?'};
    for(const key of Object.keys(questions))if(!has(key)||(key==='due'&&!validDate(p[key])))return {key,question:questions[key],type:key==='due'?'date':'text'};
    return {key:'pilot-confirm',question:p.sessionReadyAt?'Your test plan is saved. Run it, then return with the result.':'Your test plan is ready. Confirm it, then run the test and return with the result.'};

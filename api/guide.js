@@ -20,7 +20,7 @@ module.exports=async(req,res)=>{
  const generateTurn=async(options={})=>{
  const raw=await ai.generate({instructions:turnInstructions,input:JSON.stringify({context,message:b.message}),schema,maxTokens:3000,attachments,...access,...options});
  const fields={};for(const k of keys){if(typeof raw.fields?.[k]==='string'&&raw.fields[k].trim()&&!raw.fields[k].includes('[excerpt]'))fields[k]=raw.fields[k].slice(0,4000)}
- if(fields.actual){const evidence=raw.resultEvidence;if((!['qualitative','mixed'].includes(b.problem.resultType)&&!Number.isFinite(Number(fields.actual)))||typeof evidence!=='string'||!b.message.includes(evidence)||!evidence.includes(fields.actual))delete fields.actual;}
+ if(fields.actual){const evidence=raw.resultEvidence;const quoted=typeof evidence==='string'&&evidence.trim()&&b.message.includes(evidence);if(b.problem.frameworkVersion===2&&b.stage==='Validate'&&b.problem.pilotStarted&&require('../workflow').frameworkStep({...b.problem,stage:b.stage}).key==='actual'&&quoted){fields.actual=evidence.slice(0,4000);}else if((!['qualitative','mixed'].includes(b.problem.resultType)&&!Number.isFinite(Number(fields.actual)))||!quoted||!evidence.includes(fields.actual))delete fields.actual;}
  for(const k of ['due','review'])if(fields[k]&&!require('../workflow').validDate(fields[k]))delete fields[k];
  const merged={...b.problem,...fields};
  const ready=raw.ready===true&&missing(b.stage,merged).length===0;
