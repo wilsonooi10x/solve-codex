@@ -28,6 +28,7 @@ async function guideSend(d,text){text=text.trim();if(d._readingFiles)return;if(!
  for(const k of WF.stageFields[requestStage])if(typeof data.fields?.[k]==='string'&&data.fields[k].trim()&&!(requestStage==='Validate'&&(p.sessionReadyAt||p.pilotStarted)&&WF.pilotFields.includes(k))&&!(requestStage==='Execute & Evolve'&&p.executionConfirmedAt))p[k]=data.fields[k];
  if(requestStage==='List'&&p.frameworkVersion===2)p.listInvited=true;
  if(data.solutions?.length)p.solutions=data.solutions;else if(requestStage==='Observe'&&(data.review||data.nextStage==='List'))p.solutions=[];
+ if(requestStage==='State'&&p.frameworkVersion===2&&data.stateEvidence)p.stateEvidence=data.stateEvidence;
  if(data.executive&&typeof data.executive==='object')p.executive=data.executive;
  g.review=p.frameworkVersion===2?null:data.review&&data.review.stage===requestStage?data.review:null;
  g.assumptions=Array.isArray(data.assumptions)?data.assumptions:[];g.ready=data.ready===true;
@@ -179,7 +180,7 @@ function guideNavigation(d,p){
  if(p.stage==='Execute & Evolve'&&p.pilotPlan)Object.assign(p,p.pilotPlan);
  for(const k of ['actual','feedback','decision','reason','executionConfirmedAt','executionReviewConfirmedAt','sessionReadyAt','resultConfirmedAt','closedAt'])delete p[k];p.pilotStarted=false;for(let i=0;i<3;i++)p['result'+i]='';
  if(['State','Observe','List'].includes(stage))p.chosen='';if(['State','Observe'].includes(stage))p.solutions=[];
- p.stage=stage;p.listInvited=false;p.status='Revising '+stage;const g=getGuide(p);g.review=null;g.ready=false;g.unreadQuestion=false;for(const key of ['pilotPlanDraft','executionPlanDraft','executionReviewDraft','resultDraft'])delete g[key];g.transition='Revision started in '+stage+'. Earlier evidence is retained in history; confirm the revised path before executing.';appendGuideMessages(p,{role:'assistant',text:g.transition,question:firstQuestions[stage]});save();render();guidePaint(d);
+ if(stage==='State')delete p.stateEvidence;p.stage=stage;p.listInvited=false;p.status='Revising '+stage;const g=getGuide(p);g.review=null;g.ready=false;g.unreadQuestion=false;for(const key of ['pilotPlanDraft','executionPlanDraft','executionReviewDraft','resultDraft'])delete g[key];g.transition='Revision started in '+stage+'. Earlier evidence is retained in history; confirm the revised path before executing.';appendGuideMessages(p,{role:'assistant',text:g.transition,question:firstQuestions[stage]});save();render();guidePaint(d);
  };
  });
 }
