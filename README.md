@@ -129,3 +129,5 @@ Both provider paths use an executive decision brief: keep the original business 
 ## Workshop planning finish and real outcomes
 
 Manual and AI-guided SOLVE now share stage objectives, workshop field definitions and priority scoring. Validate offers a single editable pilot form and an explicit **planning session complete** milestone; participants do not need to invent results during the hackathon. Conditional E drafts stay separate until real pilot evidence and owner approval. E setup ends with a confirmed execution plan and calendar review date, followed later by a user-confirmed outcome review and cycle closure. See [workshop planning flow](docs/workshop-planning-flow.md). Short action briefs are promoted for printing; full histories remain exportable.
+
+The released OS follows the workshop worksheet through `frameworkVersion: 2`: one conversational question per substep, supported Five Whys, user options before balanced scoring, and explicit V result / E plan confirmation. See `docs/workshop-planning-flow.md`.

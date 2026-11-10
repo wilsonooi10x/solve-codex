@@ -41,3 +41,15 @@ The Revisit control separates inspecting saved fields from explicitly starting a
 ## Simplicity revision
 
 The main V screen now opens one full-width test-plan editor rather than nesting it under duplicate preparation controls. Future-execution drafting is removed from the V user flow (existing saved drafts remain readable in the record/export). Context is collapsed and repeated question banners are hidden for V/E forms. Phone fields stack in a single column. Plan summary layout is explicitly scoped to value rows rather than every direct child div; this prevents form containers being constrained to a 90px column. Plain coaching follows the five stages and keeps uncertainty visible without repeated labels.
+
+## Worksheet-led conversational OS (10 November 2026)
+
+The manual workshop remains facilitator-led. The released OS now uses `frameworkVersion: 2`, shared `frameworkStep` definitions and a dedicated backend coaching contract. Existing unversioned OS cases enter this flow without deleting any captured fields or history. Explicit version-1 records retain their older edit flows for compatibility.
+
+- **S:** problem, specific current gap, business impact and big problem statement. A turn count alone cannot advance a generic complaint.
+- **O:** leakage first, then one supported causal Why at a time (up to five), then a possible-root-cause summary. Unsupported links stay empty. No three-answer forced checkpoint. Unknown information becomes an evidence check, not invented causation.
+- **L:** invite the user's options before showing estimates. Use the worksheet's balanced Impact + Ease + Feasibility total out of 15; user selects with rationale. AI suggestions are available when needed.
+- **V:** conversational experiment design, expected result, measurement, PIC/decision owner and date; confirm the short test summary. Pause until a real result exists. Actual-result confirmation precedes Adopt/Improve/Scale/Stop and reason. No mandatory multi-field setup form.
+- **E:** ask for missing What/Who/When/How, business target, one KPI/target/method and review date. Confirm the plan, export the handover and finish the session. Outcome review remains available later.
+
+Dates use one calendar field and save without a paid model request. Volunteered facts can populate several fields in the current stage, so the coach does not ask them again. Full worksheet and history remain accessible. Revisions invalidate later approvals. New backend tests cover generic S, one-link capture, evidence gaps, options invitation, real-result confirmation and the dedicated prompt; a mocked Chromium rehearsal covers the complete S–O–L–V–E path on phone and desktop. No live model quality or participant load claim is implied by those tests.
