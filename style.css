@@ -72,3 +72,4 @@ header{gap:8px;flex-wrap:wrap;height:auto;min-height:88px;padding:12px 0}.app-he
 
 /* Keep the workshop identity visible without covering the manual stage navigation. */
 :root{--hackathon-banner-height:0px}.event-masthead{position:sticky;top:0;z-index:8;height:auto;padding:24px 0;background:#052037;box-shadow:0 5px 12px #0003}.event-masthead img{width:100%;height:auto;max-width:none;object-fit:contain}.workshop-stages{top:var(--hackathon-banner-height)}footer .footer-admin{display:block;margin:12px auto 0;padding:10px 18px;min-height:44px;font-size:12px}header .sync-button{white-space:nowrap;min-height:38px}@media(max-width:800px){.event-masthead{padding:18px 0}}
+.admin-sign-in{max-width:440px;margin:30px auto;padding:24px;background:#09273f;border:1px solid #4f6c81;border-radius:12px}.admin-sign-in input{font-size:20px;letter-spacing:.2em}.admin-sign-in button{margin-top:16px}

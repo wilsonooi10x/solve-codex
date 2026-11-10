@@ -2,8 +2,8 @@ const payments=require('../lib/payments'),credits=require('../lib/credits'),work
 module.exports=async(req,res)=>{res.setHeader('Cache-Control','no-store');try{
  if(!['GET','POST'].includes(req.method))return res.status(405).json({error:'Use GET or POST.'});
  let body=req.body;if(typeof body==='string'){try{body=JSON.parse(body)}catch{return res.status(400).json({error:'Invalid JSON.'})}}
- if(req.headers?.['x-solve-admin']){
-  if(!workshop.admin(req.headers['x-solve-admin']))return res.status(401).json({error:'A valid facilitator admin code is required.'});
+ if(req.headers?.['x-solve-admin']||req.headers?.['x-solve-admin-session']){
+  if(!workshop.authorized(req))return res.status(401).json({error:'A valid facilitator admin code is required.'});
   if(req.method==='GET')return res.status(200).json(await payments.state());
   if(body?.action!=='configure')return res.status(400).json({error:'Unknown paid control action.'});
   return res.status(200).json(await payments.configure(body));

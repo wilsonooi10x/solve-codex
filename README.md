@@ -131,3 +131,13 @@ Both provider paths use an executive decision brief: keep the original business 
 Manual and AI-guided SOLVE now share stage objectives, workshop field definitions and priority scoring. Validate offers a single editable pilot form and an explicit **planning session complete** milestone; participants do not need to invent results during the hackathon. Conditional E drafts stay separate until real pilot evidence and owner approval. E setup ends with a confirmed execution plan and calendar review date, followed later by a user-confirmed outcome review and cycle closure. See [workshop planning flow](docs/workshop-planning-flow.md). Short action briefs are promoted for printing; full histories remain exportable.
 
 The released OS follows the workshop worksheet through `frameworkVersion: 2`: one conversational question per substep, supported Five Whys, user options before balanced scoring, and explicit V result / E plan confirmation. See `docs/workshop-planning-flow.md`.
+
+### Admin PIN sign-in
+
+To use a PIN instead of typing the facilitator Admin Code in each panel:
+
+1. Run `supabase/admin-pin.sql` in Supabase SQL Editor (also served at `/admin-pin.sql`). This adds persistent sign-in attempt limits; it does not change participant balances.
+2. Set `SOLVE_ADMIN_PIN` in Vercel to the chosen 4–8 digit PIN. Keep the existing private `SOLVE_WORKSHOP_ADMIN_CODE` (at least 16 characters), `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` configured on the server.
+3. Redeploy. Open **Admin** in the footer, enter the PIN once, and use the controls without entering the Admin Code again. **Lock Admin** signs out this browser.
+
+The browser uses an HttpOnly session cookie, valid for up to eight hours and without a persistent cookie lifetime. Rotating the PIN or the existing server Admin Code invalidates existing sessions. Before a PIN is configured, the existing Admin Code flow remains available. PIN sign-in fails closed if the database attempt limiter is unavailable. Five attempts per address and 100 attempts across the app are allowed per 15-minute window. The PIN and Admin Code are never embedded in the public app files.

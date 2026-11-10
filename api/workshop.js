@@ -4,7 +4,7 @@ module.exports=async(req,res)=>{
  try{
  if(req.method==='GET'){const s=await workshop.state();return res.status(200).json(s)}
  if(req.method!=='POST')return res.status(405).json({error:'Use GET or POST.'});
- if(!workshop.admin(req.headers?.['x-solve-admin']))return res.status(401).json({error:'A valid facilitator admin code is required.'});
+ if(!workshop.authorized(req))return res.status(401).json({error:'A valid facilitator admin code is required.'});
  let body=req.body;if(typeof body==='string'){try{body=JSON.parse(body)}catch{return res.status(400).json({error:'Invalid JSON request.'})}}
  if(body?.action==='test-openai')return res.status(200).json(await require('../lib/admin-ai-test').testOpenAI());
  if(!workshop.enabled())return res.status(503).json({error:'Enable workshop controls in Vercel first.'});
