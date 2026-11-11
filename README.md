@@ -124,13 +124,11 @@ Business Core 5 website or pasted-text extraction can use the selected 10XSC tri
 
 ## Executive SOLVE guidance
 
-Both provider paths use an executive decision brief: keep the original business objective visible, recommend a systematic next step, distinguish reported facts from unverified causes, and propose evidence tasks instead of demanding every operational detail from the entrepreneur. State offers a review checkpoint after two answered turns; Observe after three, or earlier for unknown answers, a request for suggestions, or repeated questions. A checkpoint needs explicit user confirmation and preserves evidence gaps; it does not assert a proven root cause or authorise a pilot/rollout. Earlier supported answers and stage counts travel in bounded durable context alongside recent conversation. The user can intentionally edit the decision focus; original context and acknowledgements remain in the saved record and PDF. No model, API key, payment, workshop or result/owner-decision settings change.
+The current framework-v2 contract is [SOLVE acceptance and release status](docs/solve-release-contract.md). Both providers follow the same S → O → L → V → E process and preserve case memory. State progresses when reported facts suffice; unknowns receive useful guidance or an evidence task. Observe follows supported Whys and keeps possible causes unverified. The historical two/three-turn checkpoint interface applies only to explicit legacy-v1 cases, not the current flow.
 
 ## Workshop planning finish and real outcomes
 
-Manual and AI-guided SOLVE now share stage objectives, workshop field definitions and priority scoring. Validate offers a single editable pilot form and an explicit **planning session complete** milestone; participants do not need to invent results during the hackathon. Conditional E drafts stay separate until real pilot evidence and owner approval. E setup ends with a confirmed execution plan and calendar review date, followed later by a user-confirmed outcome review and cycle closure. See [workshop planning flow](docs/workshop-planning-flow.md). Short action briefs are promoted for printing; full histories remain exportable.
-
-The released OS follows the workshop worksheet through `frameworkVersion: 2`: one conversational question per substep, supported Five Whys, user options before balanced scoring, and explicit V result / E plan confirmation. See `docs/workshop-planning-flow.md`.
+Manual and guided modes share worksheet stage objectives and priority scoring. Current guided v2 captures the plan conversationally, one question at a time. Validate can finish with a saved test plan before real results exist. After an observed result, user confirmation and an owner’s Adopt/Scale decision, E finishes with an execution plan and review date. A plan is not a realised outcome. See the [current acceptance contract](docs/solve-release-contract.md). The [earlier planning-form design](docs/workshop-planning-flow.md) is historical reference, not the default guided interface.
 
 ### Admin PIN sign-in
 
@@ -141,3 +139,7 @@ To use a PIN instead of typing the facilitator Admin Code in each panel:
 3. Redeploy. Open **Admin** in the footer, enter the PIN once, and use the controls without entering the Admin Code again. **Lock Admin** signs out this browser.
 
 The browser uses an HttpOnly session cookie, valid for up to eight hours and without a persistent cookie lifetime. Rotating the PIN or the existing server Admin Code invalidates existing sessions. Before a PIN is configured, the existing Admin Code flow remains available. PIN sign-in fails closed if the database attempt limiter is unavailable. Five attempts per address and 100 attempts across the app are allowed per 15-minute window. The PIN and Admin Code are never embedded in the public app files.
+
+### Participant release gate
+
+The [SOLVE acceptance contract and current readiness status](docs/solve-release-contract.md) is the canonical framework-v2 reference. Run `npm run verify:release` for syntax, all automated checks and the build. Local passes do not constitute live-provider, deployment or 200–300-participant sign-off. During hardening, retain the agreed flow and fix release blockers before adding features.

@@ -1,5 +1,7 @@
 # Shared SOLVE framework and a clear planning finish
 
+> Historical planning-form design. Current guided framework-v2 behaviour is defined in [SOLVE acceptance and release status](solve-release-contract.md). Do not reintroduce these earlier form/action layouts as the default conversation. Shared worksheet concepts and retained legacy/manual behaviour remain relevant.
+
 Both the manual workshop and AI-guided modes now use the stage definitions in `workflow.js`: State's problem/current/impact/statement, Observe's process leakage and up to five supported Why links, List's impact/ease/feasibility criteria, Validate's pilot/evidence/decision, and E's execution/KPI/review. Manual fields are sourced from the same module rather than a separate list. The stage objective, steps, expected output and completion rule appear in both UIs. Five Whys is a causal inquiry tool; missing links remain unknown instead of being invented to fill all five boxes.
 
 List uses the same scoring function in both modes. Balanced sums the three criteria; selecting impact, ease or feasibility weights that criterion three times. All scores are 1–5, higher better; ease 5 means least effort. The manual worksheet shows a live comparison matrix and the guided cards allow the user to edit the scores. Estimates and ranking do not automatically choose a solution or prove impact. One selected option and rationale lead into a pilot, tied to the working cause.
