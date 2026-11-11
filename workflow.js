@@ -34,15 +34,16 @@
  function activateRollout(p){if(!canScale(p))throw Error('Record actual pilot evidence and the owner’s Adopt or Scale decision first.');p.pilotPlan=Object.fromEntries(pilotFields.map(k=>[k,p[k]||'']));const draft=p.rolloutDraft||{};for(const k of executionFields)p[k]=typeof draft[k]==='string'?draft[k]:'';for(let i=0;i<3;i++){p['result'+i]='';for(const key of ['kpi','target','measurement'])if(i>0)p[key+i]=typeof draft[key+i]==='string'?draft[key+i]:''}delete p.executionConfirmedAt;p.stage='Execute & Evolve';p.status=p.decision==='Adopt'?'Preparing adoption':'Scaling';return p;}
  function scoreComplete(s){return Boolean(s?.name?.trim()&&['impact','effort','feasibility'].every(k=>Number.isFinite(Number(s[k]))&&Number(s[k])>=1&&Number(s[k])<=5))}
  // Durable decision context travels separately from the rolling conversation window.
+ function navigationReply(value){return /^(?:(?:ok(?:ay)?|yes|yeah|yep)(?:\s+(?:pls|please))?|(?:ok\s+)?(?:let['’]?s\s+)?(?:move on|move to (?:observe|the next stage)|continue|next)|don['’]?t know|not sure|can skip this question)[\s.!?]*$/i.test(String(value||'').trim());}
  function executiveMemory(problem={},history=[]){
   const prior=problem.executive&&typeof problem.executive==='object'?problem.executive:{};
   const messages=Array.isArray(problem.guidance?.messages)?problem.guidance.messages:history;
   const users=messages.filter(m=>m?.role==='user'&&typeof m.text==='string');
   const clip=(s,n)=>typeof s==='string'?s.slice(0,n):'';
-  const originalGoal=clip(prior.originalGoal||users[0]?.text||problem.statement||problem.current||problem.title,1200);
+  const originalGoal=clip(prior.originalGoal&&!navigationReply(prior.originalGoal)?prior.originalGoal:users.find(m=>!navigationReply(m.text))?.text||problem.statement||problem.current||problem.title,1200);
   const facts=Array.isArray(prior.facts)?prior.facts.filter(x=>typeof x==='string'):[...users.slice(0,10),...users.slice(-4)].map(m=>m.text);
-  const stageTurns={};for(const stage of stages)stageTurns[stage]=Number.isSafeInteger(prior.stageTurns?.[stage])?Math.max(0,Math.min(2000,prior.stageTurns[stage])):users.filter(m=>(m.stage||problem.stage)===stage).length;
-  return {originalGoal,goal:clip(prior.goal||originalGoal,1200),facts:[...new Set(facts)].slice(0,16).map(x=>clip(x,320)),stageTurns,
+  const stageTurns={};for(const stage of stages){const saved=Number.isSafeInteger(prior.stageTurns?.[stage]),count=users.filter(m=>m.stage===stage||(!m.stage&&!saved&&problem.stage===stage)).length;stageTurns[stage]=Math.min(2000,Math.max(count,saved?Math.max(0,prior.stageTurns[stage]):0));}
+  return {originalGoal,goal:clip(prior.goal&&!navigationReply(prior.goal)?prior.goal:originalGoal,1200),facts:[...new Set(facts)].slice(0,16).map(x=>clip(x,320)),stageTurns,
    recommendation:clip(prior.recommendation,1100),hypotheses:(Array.isArray(prior.hypotheses)?prior.hypotheses:[]).filter(x=>typeof x==='string').slice(0,3).map(x=>clip(x,350)),
    evidenceGaps:(Array.isArray(prior.evidenceGaps)?prior.evidenceGaps:[]).filter(x=>typeof x==='string').slice(0,4).map(x=>clip(x,250)),
    proposedActions:(Array.isArray(prior.proposedActions)?prior.proposedActions:[]).filter(x=>typeof x==='string').slice(0,3).map(x=>clip(x,350))};
@@ -56,7 +57,7 @@
   const problem=pickStrings(source,keys,14000,1800);problem.stage=stages.includes(input.stage)?input.stage:'State';problem.pilotStarted=source.pilotStarted===true;problem.frameworkVersion=source.frameworkVersion===2?2:1;if(source.stateEvidence&&typeof source.stateEvidence==='object')problem.stateEvidence=pickStrings(source.stateEvidence,['gapQuote','scopeQuote','impactQuote'],1400,420);
   if(Array.isArray(source.solutions))problem.solutions=source.solutions.filter(s=>s&&typeof s==='object').slice(0,5).map(s=>({...pickStrings(s,['name','rationale'],600,280),impact:Number(s.impact)||1,effort:Number(s.effort)||1,feasibility:Number(s.feasibility)||1}));
   const business=pickStrings(input.business,['company','website','purpose','vision','mission','values','positioning'],3500,750);
-  const history=[];let budget=6000;for(const m of (Array.isArray(input.history)?input.history:[]).slice(-12).reverse()){if(!m||typeof m!=='object')continue;const entry={role:m.role==='assistant'?'assistant':'user',...pickStrings(m,['question','text'],Math.min(budget,3500),3000)};const size=JSON.stringify(entry).length;if(size>budget||(!entry.text&&!entry.question))break;history.unshift(entry);budget-=size}
+  const history=[];let budget=6000;for(const m of (Array.isArray(input.history)?input.history:[]).slice(-12).reverse()){if(!m||typeof m!=='object')continue;const entry={role:m.role==='assistant'?'assistant':'user',...pickStrings(m,['question','text'],Math.min(budget,3500),3000)};if(stages.includes(m.stage))entry.stage=m.stage;const size=JSON.stringify(entry).length;if(size>budget||(!entry.text&&!entry.question))break;history.unshift(entry);budget-=size}
   const memory=executiveMemory({...source,executive:source.executive||input.executive},Array.isArray(input.history)?input.history:[]);
   // Recover early user reports for a State case even if an older model omitted
   // them from memory. Recent request history alone can no longer contain them.
@@ -66,16 +67,17 @@
   return {stage:problem.stage,problem,business,executive,history,frameworkStep:source.frameworkVersion===2?frameworkStep({...source,stage:problem.stage}):null,currentQuestion:excerpt(input.currentQuestion||'',2000),clientDate:String(input.clientDate||'').slice(0,20),timezone:String(input.timezone||'').slice(0,80),contextNote:'Selected field excerpts and recent conversation only; full history, original fields, trials and audit logs remain saved. Clarify details if an excerpt is insufficient.',excerptedFields:[...new Set(omitted)].slice(0,60)};
  }
  // Concrete examples may be qualitative; numbers and dates are not mandatory.
- function adviceRequested(value){return /\b(?:don['’]?t know|do not know|not sure|unsure|no idea|no data|please (?:help|suggest|advise|guide)|can you (?:please )?(?:help|advise)|any (?:advice|suggestions)|you suggest|need (?:your )?(?:help|advice|advise)|what (?:can|should) (?:i|we) do|what do you (?:suggest|recommend)|can(?:not|['’]t) (?:answer|recall|remember|explain))\b/i.test(String(value||''));}
+ function adviceRequested(value){return /\b(?:don['’]?t know|do not know|not sure|unsure|no idea|no data|please (?:help|suggest|advise|guide)|can you (?:please )?(?:help|advise)|any (?:advice|suggestions)|move (?:on|to observe)|skip (?:this|the) question|you suggest|need (?:your )?(?:help|advice|advise)|what (?:can|should) (?:i|we) do|what do you (?:suggest|recommend)|can(?:not|['’]t) (?:answer|recall|remember|explain))\b/i.test(String(value||''));}
  function observableStateGap(value){
-  const text=String(value||'').trim().toLowerCase();
+  const text=String(value||'').trim().toLowerCase().replace(/[’‘]/g,"'");
   if(!text||/^(?:not (?:yet )?known|unknown|not sure|not provided|not established)/.test(text))return false;
   // Do not let a padded evaluation (or a duration alone) stand in for an observation.
   const measured=/\b\d+(?:[.,]\d+)?\s*(?:%(?!\w)|(?:orders?|sales|projects?|quotations?|quotes?|customers?|clients?|covers?|complaints?|errors?|deliveries|deals?|tickets?|returns?|days? late|weeks? late)\b)/.test(text)||/\b(?:zero|no)\s+(?:orders?|sales|deals?|responses?|replies|conversions?|deliveries)\b/.test(text)||/\b(?:from|by)\s+(?:rm|usd|\$)?\s*\d/.test(text);
   const event=/\b(?:drop(?:ped|s|ping)?|declin(?:e|ed|es|ing)|fall(?:en|ing|s)?|fell|decreas(?:e|ed|es|ing)|miss(?:ed|es|ing)?|overdue|delayed|late|incorrect|wrong|incomplete|cancel(?:led|ed|s)?|broken|damaged|duplicated|stopped|reject(?:ed|s)?|rework|resign(?:ed|s)?|refund(?:ed|s)?|stalled|unanswered|unpaid|unresolved|lost|losing)\b/.test(text);
-  const failure=/\b(?:does(?:n't| not)|did(?:n't| not)|has(?:n't| not)|have(?:n't| not)|cannot|can(?:'t| not)|fail(?:ed|s)? to|not)\s+(?:(?:been|being|ever|yet|always|regularly|consistently)\s+)*(?:follow(?:ing)? up|submit(?:ted)?|deliver(?:ed)?|respond(?:ed)?|reply|pay|paid|complete(?:d)?|convert(?:ed)?|return(?:ed)?|arrive(?:d)?|record(?:ed)?|close(?:d)?)\b/.test(text);
-  const process=/\b(?:deadline|handover|invoice|payment|shipment|orders?|report|customers?|clients?|covers?|buyers?|prospects?|inquiry|enquiry|leads?|meeting|project|approval|contract|task|ticket|record|budget|quotation|delivery|deal|email|call|sales|stock|product|service|booking|revenue|data|equipment|machine|part|unit)\b/.test(text);
-  return measured||((event||failure)&&process);
+  const failure=/\b(?:does(?:n't| not)|did(?:n't| not)|has(?:n't| not)|have(?:n't| not)|cannot|can(?:'t| not)|fail(?:ed|s)? to|not)\s+(?:(?:been|being|ever|yet|always|regularly|consistently|get to|got to)\s+)*(?:follow(?:ing)?[- ]up|submit(?:ted)?|deliver(?:ed)?|respond(?:ed)?|reply|pay|paid|complete(?:d)?|convert(?:ed)?|return(?:ed)?|arrive(?:d)?|record(?:ed)?|close(?:d)?)\b/.test(text);
+  const process=/\b(?:targets?|follow[- ]ups?|sop|procedure|pipeline|deadline|handover|invoice|payment|shipment|orders?|report|customers?|clients?|covers?|buyers?|prospects?|inquiry|enquiry|leads?|meeting|project|approval|contract|task|ticket|record|budget|quotation|delivery|deal|email|call|sales|stock|product|service|booking|revenue|data|equipment|machine|part|unit)\b/.test(text);
+  const absence=/\b(?:no|without)\s+(?:(?:concrete|documented|defined|agreed|follow|up|follow-up|sales)\s+)*(?:sop|procedure|process|owner|ownership|record|handover)\b/.test(text);
+  return measured||((event||failure)&&process)||absence;
  }
  function stateSpecific(p){return missing('State',p).length===0&&String(p.current||'').trim().length>=25&&String(p.statement||'').trim().length>=25&&!/^(?:my )?(?:sales|manager|staff|business|team)(?: is| are)? (?:bad|poor|not performing|a problem)[.!]?$/i.test(String(p.current||'').trim());}
  function frameworkStep(p){
@@ -103,5 +105,5 @@
   for(const key of Object.keys(questions))if(!has(key)||(['due','review'].includes(key)&&!validDate(p[key])))return {key,question:questions[key],type:['due','review'].includes(key)?'date':'text'};
   return {key:'execution-confirm',question:p.executionConfirmedAt?'Your execution plan is saved. Carry it out and return on '+p.review+' to review the result.':'Your execution plan is ready to confirm.'};
  }
- const api={adviceRequested,observableStateGap,stateSpecific,frameworkStep,validDate,stageInfo,workshopSections,pilotFields,executionFields,canScale,stageProgress,activateRollout,scoreComplete,executiveMemory,stages,stageFields,missing,canDecide,resultType,score,guideContext};if(typeof module==='object'&&module.exports)module.exports=api;else root.SolveWorkflow=api;
+ const api={navigationReply,adviceRequested,observableStateGap,stateSpecific,frameworkStep,validDate,stageInfo,workshopSections,pilotFields,executionFields,canScale,stageProgress,activateRollout,scoreComplete,executiveMemory,stages,stageFields,missing,canDecide,resultType,score,guideContext};if(typeof module==='object'&&module.exports)module.exports=api;else root.SolveWorkflow=api;
 })(typeof window==='object'?window:globalThis);
