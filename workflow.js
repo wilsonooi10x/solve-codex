@@ -66,6 +66,7 @@
   return {stage:problem.stage,problem,business,executive,history,frameworkStep:source.frameworkVersion===2?frameworkStep({...source,stage:problem.stage}):null,currentQuestion:excerpt(input.currentQuestion||'',2000),clientDate:String(input.clientDate||'').slice(0,20),timezone:String(input.timezone||'').slice(0,80),contextNote:'Selected field excerpts and recent conversation only; full history, original fields, trials and audit logs remain saved. Clarify details if an excerpt is insufficient.',excerptedFields:[...new Set(omitted)].slice(0,60)};
  }
  // Concrete examples may be qualitative; numbers and dates are not mandatory.
+ function adviceRequested(value){return /\b(?:don['’]?t know|do not know|not sure|unsure|no idea|no data|please (?:help|suggest|advise|guide)|can you (?:please )?(?:help|advise)|any (?:advice|suggestions)|you suggest|need (?:your )?(?:help|advice|advise)|what (?:can|should) (?:i|we) do|what do you (?:suggest|recommend)|can(?:not|['’]t) (?:answer|recall|remember|explain))\b/i.test(String(value||''));}
  function observableStateGap(value){
   const text=String(value||'').trim().toLowerCase();
   if(!text||/^(?:not (?:yet )?known|unknown|not sure|not provided|not established)/.test(text))return false;
@@ -102,5 +103,5 @@
   for(const key of Object.keys(questions))if(!has(key)||(['due','review'].includes(key)&&!validDate(p[key])))return {key,question:questions[key],type:['due','review'].includes(key)?'date':'text'};
   return {key:'execution-confirm',question:p.executionConfirmedAt?'Your execution plan is saved. Carry it out and return on '+p.review+' to review the result.':'Your execution plan is ready to confirm.'};
  }
- const api={observableStateGap,stateSpecific,frameworkStep,validDate,stageInfo,workshopSections,pilotFields,executionFields,canScale,stageProgress,activateRollout,scoreComplete,executiveMemory,stages,stageFields,missing,canDecide,resultType,score,guideContext};if(typeof module==='object'&&module.exports)module.exports=api;else root.SolveWorkflow=api;
+ const api={adviceRequested,observableStateGap,stateSpecific,frameworkStep,validDate,stageInfo,workshopSections,pilotFields,executionFields,canScale,stageProgress,activateRollout,scoreComplete,executiveMemory,stages,stageFields,missing,canDecide,resultType,score,guideContext};if(typeof module==='object'&&module.exports)module.exports=api;else root.SolveWorkflow=api;
 })(typeof window==='object'?window:globalThis);
