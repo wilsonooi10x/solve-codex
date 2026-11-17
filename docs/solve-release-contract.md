@@ -1,6 +1,6 @@
 # SOLVE OS acceptance contract and release status
 
-Date: 12 November 2026 (Malaysia). Runtime baseline: `eabc942`.
+Date: 12 November 2026 (Malaysia). Original reliability baseline: `eabc942`. The finalized-framework alignment below is authorised by Wilson on 18 November 2026.
 
 **Current status: controlled testing only. Not yet signed off for participant rollout.**
 
@@ -13,7 +13,7 @@ The runtime framework is version 2, matching the manual S–O–L–V–E worksh
 | S — State | Capture an observable gap, business scope and reported impact; synthesise the statement. Recognise ordinary speech, short figures and qualitative observations. A vague judgment needs clarification. Once facts suffice, enter O without asking for a cause or an unnecessary extra example. | `tests/framework-coach.test.js`: generic/invented facts rejected, restaurant and sales-follow-up PDF regressions |
 | Uncertain answers | “Not sure”, “don't know”, advice and skip requests receive useful guidance. Repeated unknowns in incomplete S produce an evidence task and safe pause. Unknowns in O can lead to diagnostic options with the cause unverified. Never fill missing facts or force five guessed Whys. | `tests/framework-coach.test.js`: advice, pause and diagnostic-option regressions |
 | O — Observe | Locate leakage; follow supported Why links, up to five. Separate reports, hypotheses and evidence gaps. Do not describe a proposed cause as proven. | Observe and hypothesis tests in `tests/framework-coach.test.js`; real-model interpretation still needs live evaluation |
-| L — List | Invite user options; an explicit advice request can show suggestions immediately. Compare impact, ease and feasibility, each 1–5 with higher better. Changing priority changes weights, not underlying ratings. The user chooses. | Framework, workflow and executive UI suites |
+| L — List | Invite user options; an explicit advice request can show suggestions immediately. Compare impact, speed, risk and feasibility, each 1–5 with higher better. Changing priority changes weights, not underlying ratings. The user chooses. | Framework, workflow and executive UI suites |
 | V — Validate | Experiment → result → decision and reason. A saved test plan is a valid workshop finish; never require real-world results during the event. Capture observed results verbatim for user confirmation. Advice and forecasts are not actual results. Allow corrections. | V edit/result guards and `tests/solve-journey.test.js` |
 | Decisions | Adopt and Scale enter E at tested versus expanded scope. Improve revises a test while preserving prior evidence. Stop saves learning and offers alternatives. Choosing an alternative preserves the previous cycle. | Framework and executive UI decision/revision tests |
 | E — Execute & Evolve | Capture what/how/who/when, business target, meaningful metric/target/method and review date. Use date inputs. Confirmation saves the plan, gives a visible finish and offers an action brief. Do not continue setup questioning or mark the business problem solved. | E confirmation/review tests and `tests/solve-journey.test.js` |
@@ -50,3 +50,9 @@ No live API secrets or deployment access are configured in this execution enviro
 ## Stop-release conditions
 
 Any answered question looping without a useful next step; S/O progressing on invented facts; lost/corrupted focus; disagreement between the displayed stage and summary; an actual result invented from advice/forecast; confirmation with no saved finish; lost work; or use of the wrong credit source is a release blocker. Record the case, stage, expected/actual behaviour and release commit, then add a regression before fixing it. User reports remain evidence, not a request to add another competing workflow.
+
+## Finalized-framework amendment (18 November 2026)
+
+Wilson authorised these exact changes after reviewing the final booklet: S opens with “What problem are we solving?”; O retains one phone-friendly answer with Stage/process → Observation/data → Gap/leakage guidance; L uses Impact, Speed, Risk, Feasibility; V displays Scale; E uses What → Who → When → How. Higher marks always mean better: Impact 5 highest impact, Speed 5 fastest signal, Risk 5 lowest risk, Feasibility 5 most feasible. Balanced total is out of 20; existing optional priority weighting totals out of 30. Scoring estimates remain advisory.
+
+Saved effort ratings are not converted to Speed or Risk. Existing options remain saved, with missing ratings requiring review before a new guided pilot selection. Existing confirmed plans, outcomes, trials and compatibility with stored “Move to scale” decisions are retained. API solution schema and outputs use the four current rating keys. No change to evidence gates, question budgets, trial/paid accounting or Stripe configuration is part of this amendment.

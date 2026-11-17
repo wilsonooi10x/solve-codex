@@ -143,3 +143,7 @@ The browser uses an HttpOnly session cookie, valid for up to eight hours and wit
 ### Participant release gate
 
 The [SOLVE acceptance contract and current readiness status](docs/solve-release-contract.md) is the canonical framework-v2 reference. Run `npm run verify:release` for syntax, all automated checks and the build. Local passes do not constitute live-provider, deployment or 200–300-participant sign-off. During hardening, retain the agreed flow and fix release blockers before adding features.
+
+### Finalized SOLVE wording and scoring
+
+S opens “What problem are we solving?”. O uses one answer with Stage/process → Observation/data → Gap/leakage prompts. L compares Impact, Speed, Risk and Feasibility (1–5 each, higher always better; Risk 5 = lowest risk, Speed 5 = fastest signal), balanced total out of 20. Earlier effort scores are preserved historically but never copied into Speed or Risk; missing ratings need review before a new guided selection. V displays Scale while accepting earlier stored “Move to scale” decisions. E follows What → Who → When → How consistently in questions, worksheets and summaries. Existing evidence/confirmation gates and credit/Stripe settings are unchanged.
