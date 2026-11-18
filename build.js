@@ -7,7 +7,7 @@ fs.mkdirSync(path.join(output,'assets','vendor'),{recursive:true});
 for(const file of ['index.html','app.js','style.css','workflow.js','guided.js','attachments.js','participant-import.js','sync.js','onboarding.js','access.js','admin-auth.js','workshop.js','credits.js','payments.js','case-report.js','manifest.webmanifest']){
  fs.copyFileSync(path.join(root,file),path.join(output,file));
 }
-for(const file of fs.readdirSync(path.join(root,'assets')).filter(name=>name.endsWith('.png'))){
+for(const file of fs.readdirSync(path.join(root,'assets')).filter(name=>/\.(png|svg)$/.test(name))){
  fs.copyFileSync(path.join(root,'assets',file),path.join(output,'assets',file));
 }
 for(const file of fs.readdirSync(path.join(root,'assets','vendor'))){
