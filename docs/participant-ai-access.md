@@ -15,3 +15,9 @@ The wallet paused label corresponds to the database setting `solve_trial_setting
 To investigate: Admin → Load trial controls. Check enabled state, event and per-account budgets, model prices, and OpenAI usage/model responses. After resolving the cause, enable trial usage, confirm prices and save. Workshop controls must also release OS mode. Do not assume the remaining credit count means budget is available. Reapproving accounts does not reset spent balances.
 
 The development workspace has no live Supabase/OpenAI credentials; no live balances, budgets or trial settings were changed for this UI release.
+
+## Batch approval from Excel
+
+Admin → Load trial controls → Approve existing participant accounts → Import participant list. Choose .xlsx, .csv or .txt (up to 2 MB). Prefer a file containing an Email column with registered sign-in addresses; names and other columns are ignored. For .xls, save as .xlsx or CSV first. XLSX values are read locally, not formulas executed. No spreadsheet contents are sent to AI.
+
+The import merges with the review box, normalises case, removes duplicates, and stops if malformed email entries or more than 300 unique addresses are detected. It never approves accounts automatically. Review the addresses, then click Approve one-time allowances. The existing authenticated approval endpoint reports accounts not yet registered. Ask those people to register, then approve their addresses again. Reapproving never resets an existing balance. This does not update the separate Vercel Stripe Sandbox tester allowlist.

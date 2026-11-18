@@ -1,5 +1,5 @@
 /* Read Office text locally; send PDFs and pictures as native AI inputs. Originals stay in memory only. */
-window.SolveAttachments={async read(file){
+window.SolveAttachments={async read(file,{maxText=20000}={}){
  const name=file.name.slice(0,160),ext=name.split('.').pop().toLowerCase();
  if(file.size>2*1024*1024)throw Error(`${name}: maximum file size is 2 MB.`);
  const bytes=new Uint8Array(await file.arrayBuffer());
@@ -19,6 +19,6 @@ window.SolveAttachments={async read(file){
   }
  }else throw Error('Use PDF, DOCX, XLSX, PPTX, CSV, TXT, PNG, JPG or WebP. Export older DOC/XLS/PPT files as PDF.');
  if(!text.trim())throw Error(`${name}: no readable text found. Try a PDF or picture.`);
- if(text.length>20000)throw Error(`${name}: too much text. Attach only the relevant pages, slides or rows.`);
+ if(text.length>maxText)throw Error(`${name}: too much text. Attach only the relevant pages, slides or rows.`);
  return {name,mime:'text/plain',text,size:file.size};
 }};
