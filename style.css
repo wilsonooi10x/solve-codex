@@ -96,3 +96,5 @@ input[type="date"]::-webkit-date-and-time-value{text-align:left;min-width:0}
  main{padding-bottom:calc(78px + env(safe-area-inset-bottom));scroll-padding-bottom:calc(78px + env(safe-area-inset-bottom))}
  .solve-launch-button{scroll-margin-bottom:calc(78px + env(safe-area-inset-bottom))}
 }
+
+.company-welcome{display:block;color:var(--gold);font:700 clamp(20px,2.5vw,28px)/1.35 Manrope,sans-serif;overflow-wrap:anywhere}.company-welcome small{display:block;color:#afc2d4;font:400 12px/1.5 'DM Sans',sans-serif;margin:4px 0 14px}
