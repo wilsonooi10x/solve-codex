@@ -1,3 +1,5 @@
+> Current participant policy (18 November 2026): 10XSC managed credits only; personal API connections are disabled. Text evidence is supported; PDF/image analysis is unavailable. See [participant AI access](docs/participant-ai-access.md). Earlier personal-connection notes below are historical.
+
 # SOLVE OS
 
 A mobile-first, black-and-gold problem-solving app: State → Observe → List → Validate → Execute & Evolve.
