@@ -86,3 +86,13 @@ input[type="date"]::-webkit-date-and-time-value{text-align:left;min-width:0}
 /* A single, centered entry point for the guided SOLVE conversation. */
 .capture-launch{display:flex;flex-direction:column;align-items:center;text-align:center;gap:24px;padding:clamp(24px,5vw,52px);background:linear-gradient(145deg,#0d3f64,#08243b 65%);border:1px solid #a88e4d;border-radius:24px}
 .capture-launch>div{max-width:660px}.capture-launch h2{font-size:clamp(24px,3.3vw,38px);line-height:1.25;margin:16px 0}.capture-launch p{margin:0;font-size:16px}.capture-launch .solve-launch-button{width:100%;max-width:480px;min-width:0;padding:24px;gap:10px}.capture-launch .solve-launch-button strong{font-size:clamp(32px,5vw,48px)}.capture-launch .solve-launch-button span{font-size:16px}
+
+/* Compact, square-edged mobile navigation with room to scroll controls above it. */
+@media(max-width:800px){
+ aside{height:calc(54px + env(safe-area-inset-bottom));border-radius:0;padding:0 0 env(safe-area-inset-bottom);border-top:1px solid var(--border)}
+ aside nav{height:54px;align-items:stretch}
+ aside nav button,aside nav button.active{border-radius:0;clip-path:none;min-height:44px;padding:6px 4px;font-size:14px;line-height:18px}
+ aside nav button span{margin:2px 0 0;font-size:10px;line-height:14px}
+ main{padding-bottom:calc(78px + env(safe-area-inset-bottom));scroll-padding-bottom:calc(78px + env(safe-area-inset-bottom))}
+ .solve-launch-button{scroll-margin-bottom:calc(78px + env(safe-area-inset-bottom))}
+}
