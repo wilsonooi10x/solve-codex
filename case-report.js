@@ -26,8 +26,42 @@
  const action={State:'Clarify the problem, current situation and impact.',Observe:'Gather observations and check the working root cause.',List:'Compare solutions and choose one to pilot.'}[p.stage]||'Confirm the next action.';
  return [[action,p.pic||'Not assigned',p.due||'Not set','Workflow next step; confirm assignment']];
  }
+ function buildPICBrief(p,W,at){
+ const out=[],add=(type,text)=>out.push({type,text:String(text)});
+ const table=(columns,rows,widths)=>out.push({type:'table',columns,rows:rows.map(r=>r.map(v=>present(v)?value(v):'To agree')),widths,text:[columns.join(' | '),...rows.map(r=>r.map(v=>present(v)?value(v):'To agree').join(' | '))].join('\n')});
+ const named=v=>present(v)&&! /^(?:you(?: or .*)?|tbd|to be (?:assigned|confirmed)|not assigned|designated .*|.* or designated .*)$/i.test(String(v).trim());
+ const person=v=>named(v)?v:present(v)?'Name to confirm (recorded: '+v+')':'Name to confirm';
+ const executing=p.stage==='Execute & Evolve',closed=['Closed','Resolved','Stopped','Adopted'].includes(p.status);
+ const confirmed=executing?Boolean(p.executionConfirmedAt):Boolean(p.sessionReadyAt||p.pilotStarted);
+ add('title',p.title||'SOLVE action plan');add('body','PIC ACTION BRIEF · '+timeLabel(at));
+ add('note',closed?'Outcome / decision recorded. Only the follow-up actions listed below are implied.':confirmed?'Plan recorded. Confirm any missing names, dates or targets before starting.':'Draft for agreement — confirm the plan before starting.');
+ add('heading','1. Your assignment');
+ table(['Responsibility','Details'],[['Person in charge',person(p.pic)],['Report to / decision owner',person(p.owner)],['Complete by',p.due||'Date to agree'],['Review with owner',p.review||'Review date to agree'],['Plan status',p.status||W?.stageProgress(p).label||'Not recorded']],[.28,.72]);
+ const context=p.executive?.goal||p.statement||p.current||p.why||p.title;
+ if(context||p.impact)table(['Why this work matters'],[[[context,p.impact?'Business impact: '+p.impact:''].filter(Boolean).join('\n')]],[1]);
+ add('heading',executing?'2. Execute the agreed actions':'2. Next actions');
+ if(!closed&&executing&&(p.execution||p.executionHow)){
+ table(['Action','Instruction'],[['What to do',p.execution||'Agree the execution action'],['How to do it',p.executionHow||'Agree the working steps with the owner']],[.22,.78]);
+ if(Array.isArray(p.actions)&&p.actions.length)table(['Additional recorded action','Owner / due'],p.actions.map(a=>[a.what||a.action||'To agree',person(a.who||a.pic)+'\n'+(a.when||a.due||'Date to agree')]),[.65,.35]);
+ }else table(['Next action','Owner / due'],nextActions(p).map(a=>[a[0]+'\n'+a[3],person(a[1])+'\n'+a[2]]),[.65,.35]);
+ add('heading','3. What success looks like');
+ const measures=[];
+ if(executing){for(let i=0;i<3;i++)if([p['kpi'+i],p['target'+i],p['measurement'+i]].some(present))measures.push([p['kpi'+i]||'KPI '+(i+1),p['target'+i]||'Target to agree',p['measurement'+i]||'Evidence source to agree']);
+ if(p.target&&!measures.some(r=>String(r[1]).trim().toLowerCase()===String(p.target).trim().toLowerCase()))table(['Desired business result'],[[p.target]],[1]);
+ }else if(p.metric||p.expected||p.method)measures.push([p.metric||'Measure to agree',p.expected||'Success criterion to agree',p.method||'Evidence source to agree']);
+ table(['Measure','Target','Evidence to bring'],measures.length?measures:[['Measure to agree','Target to agree','Evidence source to agree']],[.34,.26,.40]);
+ if(executing){const actuals=[];for(let i=0;i<3;i++)if(present(p['result'+i]))actuals.push([p['kpi'+i]||'KPI '+(i+1),p['result'+i],p.executionReviewConfirmedAt?'Confirmed outcome review':'Reported — not yet confirmed']);if(actuals.length)table(['Recorded measure','Latest actual','Confirmation'],actuals,[.34,.36,.30]);}
+ add('heading','4. Report back and agree the next step');
+ add('body','Review date: '+(p.review||'To agree')+' · Report to: '+person(p.owner));
+ table(['PIC checklist','Update to provide'],[['Progress / actual result','State what was completed and the actual result against each target.'],['Evidence','Bring the records or figures named in the table above.'],['Blocker / support needed','State what is delayed or at risk and what help you need.'],['Next action','Agree the next action, named owner and due date with the decision owner.']],[.28,.72]);
+ if(p.root||p.actual||p.feedback||p.learning||p.executive?.hypotheses?.length||p.executive?.evidenceGaps?.length){add('heading','Background — previous test / learning');const rows=[];if(p.root||p.executive?.hypotheses?.length)rows.push(['Working cause (not proven)',p.root||p.executive.hypotheses.join('\n')]);if(p.executive?.evidenceGaps?.length)rows.push(['Evidence still to check',p.executive.evidenceGaps.join('\n')]);if(p.actual)rows.push(['Previous experiment result',p.actual+(p.frameworkVersion===2&&!p.resultConfirmedAt?' (reported; confirmation pending)':'')]);if(p.learning||p.feedback)rows.push(['Learning / evidence note',p.learning||p.feedback]);table(['Reference','Recorded information'],rows,[.28,.72]);}
+ if(p.rolloutDraft&&Object.values(p.rolloutDraft).some(present)){add('heading','Conditional rollout draft — not approved execution');table(['Draft item','Proposed detail'],[['What',p.rolloutDraft.execution],['Who',person(p.rolloutDraft.pic)],['When',p.rolloutDraft.due],['How',p.rolloutDraft.executionHow],['Desired result',p.rolloutDraft.target],['KPI / target',[p.rolloutDraft.kpi0,p.rolloutDraft.target0].filter(Boolean).join(' — ')],['Review date',p.rolloutDraft.review]],[.28,.72]);add('note','Do not start this rollout until actual experiment results and an owner decision are recorded.');}
+ add('note','Use this brief for the assignment and review. The full case PDF keeps the SOLVE worksheet and history. This PDF does not send reminders or track acknowledgement; record updates in SOLVE OS.');
+ return out;
+ }
  function buildCaseReport(p,business={},at=new Date(),options={}){
  const W=typeof module==='object'&&module.exports?require('./workflow'):root.SolveWorkflow;
+ if(options.briefOnly)return buildPICBrief(p,W,at);
  const out=[];const add=(type,text)=>out.push({type,text:String(text)});const row=(label,v)=>{if(present(v)){add('label',label);add('body',value(v))}};
  const table=(columns,rows,widths)=>out.push({type:'table',columns,rows:rows.map(r=>r.map(v=>present(v)?value(v):'Not recorded')),widths,text:[columns.join(' | '),...rows.map(r=>r.map(v=>present(v)?value(v):'Not recorded').join(' | '))].join('\n')});
  const appendix=title=>{add('pagebreak','');add('heading',title)};
@@ -70,7 +104,7 @@
  async function download(cases,business={},options={}){
  const records=Array.isArray(cases)?cases:[cases];if(!records.length)throw Error('There are no cases in this view to export.');const jsPDF=await pdfLibrary();const pdf=new jsPDF({unit:'pt',format:'a4',compress:true});const at=new Date();pdf.setProperties({title:records.length===1?(records[0].title||'SOLVE case'):'SOLVE case records',subject:'SOLVE worksheet, decisions and stored history',author:'S.O.L.V.E OS'});let canvas,ctx,y,page=0;
  const width=1240,height=1754,left=85,right=width-85,bottom=height-100;
- function begin(){canvas=document.createElement('canvas');canvas.width=width;canvas.height=height;ctx=canvas.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,width,height);ctx.fillStyle='#07304d';ctx.fillRect(0,0,width,66);ctx.fillStyle='#fff';ctx.font='bold 21px sans-serif';ctx.fillText('S.O.L.V.E OS  |  CASE RECORD',left,43);ctx.fillStyle='#c89c42';ctx.fillRect(left,85,right-left,3);y=125}
+ function begin(){canvas=document.createElement('canvas');canvas.width=width;canvas.height=height;ctx=canvas.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,width,height);ctx.fillStyle='#07304d';ctx.fillRect(0,0,width,66);ctx.fillStyle='#fff';ctx.font='bold 21px sans-serif';ctx.fillText(options.briefOnly?'S.O.L.V.E OS  |  PIC ACTION BRIEF':'S.O.L.V.E OS  |  CASE RECORD',left,43);ctx.fillStyle='#c89c42';ctx.fillRect(left,85,right-left,3);y=125}
  function finish(){if(page)pdf.addPage();page++;ctx.fillStyle='#5c6870';ctx.font='18px sans-serif';ctx.fillText(`Exported ${dateKey(at)} · ${options.briefOnly?'PIC handover brief':'Full case record'}`,left,height-45);ctx.textAlign='right';ctx.fillText(`Page ${page}`,right,height-45);ctx.textAlign='left';pdf.addImage(canvas.toDataURL('image/png'),'PNG',0,0,pdf.internal.pageSize.getWidth(),pdf.internal.pageSize.getHeight(),undefined,'FAST')}
  function table(item){
  const total=right-left,weights=item.widths||item.columns.map(()=>1/item.columns.length),colWidths=weights.map(w=>w*total),padding=13,lineHeight=30,font=22;let x;
