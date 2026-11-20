@@ -2,7 +2,7 @@
  const stages=['State','Observe','List','Validate','Execute & Evolve'];
  const scoringCriteria=[
   {key:'impact',label:'Impact',question:'If it worked perfectly, what would the metric become?',hint:'5 = highest impact'},
-  {key:'speed',label:'Speed',question:'How long until we see a signal?',hint:'5 = fastest signal'},
+  {key:'effort',label:'Effort',question:'How much work, time and resource will this take?',hint:'5 = least effort'},
   {key:'risk',label:'Risk',question:'If it fails, what breaks?',hint:'5 = lowest risk'},
   {key:'feasibility',label:'Feasibility',question:'Do we have the skills, cash, time to do this?',hint:'5 = most feasible'}
  ];
@@ -21,7 +21,7 @@
  const stageInfo={
  State:{aim:'Define the business problem and the decision needed.',steps:'Describe the current situation → business impact → one clear problem statement.',output:'A focused problem statement; separate observations from interpretations.'},
  Observe:{aim:'Find a plausible cause that can be tested, not just a symptom or a person to blame.',steps:'Map the process and leakage → ask Why along supported causal links → check evidence and alternatives.',output:'A working root cause, supporting observations and open evidence checks. Use up to five Whys; do not invent answers to fill five boxes.'},
- List:{aim:'Converge on one targeted option to test.',steps:'Link each option to a cause → score impact, speed, risk and feasibility (1–5) → choose and explain.',output:'One selected option and rationale. Scores are decision aids, not proof of impact; higher is better: 5 means highest impact, fastest signal, lowest risk and greatest feasibility.'},
+ List:{aim:'Converge on one targeted option to test.',steps:'Link each option to a cause → score impact, effort, risk and feasibility (1–5) → choose and explain.',output:'One selected option and rationale. Scores are decision aids, not proof of impact; higher is better: 5 means highest impact, least effort, lowest risk and greatest feasibility.'},
  Validate:{aim:'Test the selected option at a small, reversible scale.',steps:'Confirm pilot, owner, PIC, date, success criterion and measurement → run the test → record actual evidence → owner decides.',output:'During the hackathon: a test-ready plan. Later: expected versus actual, learning and an Adopt / Improve / Stop / Scale decision. Creating training videos is an activity; also measure the behaviour or business outcome it should improve.'},
  'Execute & Evolve':{aim:'Deploy an approved approach, then measure and review it.',steps:'What / who / when / how → business target and KPI → actual outcome → learning and next decision.',output:'During the hackathon: an optional conditional rollout draft. After pilot evidence and approval: a confirmed execution plan, then a dated outcome review. Planning complete is different from problem solved.'}
  };

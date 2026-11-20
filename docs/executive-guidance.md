@@ -8,7 +8,7 @@ The canonical current behaviour and release gate are in [SOLVE OS acceptance con
 
 - State turns a general complaint into an observable gap, business scope, reported impact and a concise problem statement. Once sufficient, enter Observe. No requirement to diagnose the cause in State.
 - Observe maps leakage and up to five supported Why links. Unknown causes remain unknown or hypothetical and lead to a practical diagnostic check. Do not fill five slots with guesses.
-- List invites user ideas or suggests options when asked, compares impact/speed/risk/feasibility, and requires a human choice. Scores are estimates, not proof.
+- List invites user ideas or suggests options when asked, compares impact/effort/risk/feasibility, and requires a human choice. Scores are estimates, not proof.
 - Validate saves the experiment, people, date, success criterion and measurement. The planning session can finish before real results exist. Later, capture an observed result, confirmation, owner decision and reason.
 - Adopt and Scale lead to execution at tested versus expanded scope. Improve revises the pilot; Stop records learning and offers alternatives.
 - Execute & Evolve finishes with a confirmed plan, target, metric and review date. Actual progress is reviewed later. A saved plan is not an achieved outcome.
