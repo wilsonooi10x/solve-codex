@@ -18,3 +18,7 @@ The Ecoslink PDF showed a real State loop: a user supplied a 500k-to-400k sales 
 ## Verification
 
 The release suite has 145 passing tests, including seven Ecoslink regression tests. Coverage includes generic complaints, supplied metric changes, mixed historical reports/forecasts, retained facts across context compaction, requests for examples, repeated uncertainty, rejected fabricated quotes, and actual browser-generated API payloads updating the saved case from State to Observe. Existing full S/O/L/V/E journey and payment-ledger tests remain green. Provider responses are mocked for repeatability; this does not constitute live-provider or 300-user load validation.
+
+## Plain-language impact follow-up
+
+Missing-impact questions name concrete consequences (revenue, cash flow, targets, cost, customers or delivery), rather than asking for “business scope or impact.” Participant-reported consequences such as “revenue is lower”, “less cash to cover expenses”, and “we may miss our annual target” are accepted without requiring a numeric loss. A forecast is retained as the participant's stated risk, never an achieved actual result. Questions, uncertainty and hypothetical examples cannot satisfy this check.

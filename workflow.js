@@ -96,7 +96,7 @@
   if(stage==='State'){
    if(!has('title'))return {key:'title',question:'What problem are we solving?'};
    if(!has('current')||String(p.current).length<25)return {key:'current',question:'What specifically is happening now, compared with what you need?'};
-   if(!has('impact'))return {key:'impact',question:'How is this affecting the business?'};
+   if(!has('impact'))return {key:'impact',question:'What does this problem affect most: revenue, cost, customers or delivery?'};
    return {key:'statement',question:'What important detail is missing from this problem statement?'};
   }
   if(stage==='Observe'){
