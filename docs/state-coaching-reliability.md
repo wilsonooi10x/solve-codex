@@ -22,3 +22,7 @@ The release suite has 145 passing tests, including seven Ecoslink regression tes
 ## Plain-language impact follow-up
 
 Missing-impact questions name concrete consequences (revenue, cash flow, targets, cost, customers or delivery), rather than asking for “business scope or impact.” Participant-reported consequences such as “revenue is lower”, “less cash to cover expenses”, and “we may miss our annual target” are accepted without requiring a numeric loss. A forecast is retained as the participant's stated risk, never an achieved actual result. Questions, uncertainty and hypothetical examples cannot satisfy this check.
+
+## Trend specificity boundary
+
+A sales/revenue trend plus a duration is not a magnitude or incident. “Our sales have dropped for the past 3 months” stays in State for a focused before/after question, even if the model returns ready=true. A supplied before/after comparison (including “sales were 500k before and are now 400k”), percentage change or concrete qualitative incident can satisfy specificity. Figures already reported are reused. Unknown figures after coaching retain the explicit provisional Observe route. This is an information-quality gate, not a fixed minimum question count, and already-progressed cases are not silently rolled back.

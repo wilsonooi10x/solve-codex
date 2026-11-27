@@ -84,11 +84,12 @@
   if(!text||/^(?:not (?:yet )?known|unknown|not sure|not provided|not established)/.test(text))return false;
   // Do not let a padded evaluation (or a duration alone) stand in for an observation.
   const measured=/\b\d+(?:[.,]\d+)?\s*(?:%(?!\w)|(?:orders?|sales|projects?|quotations?|quotes?|customers?|clients?|covers?|complaints?|errors?|deliveries|deals?|tickets?|returns?|days? late|weeks? late)\b)/.test(text)||/\b(?:zero|no)\s+(?:orders?|sales|deals?|responses?|replies|conversions?|deliveries)\b/.test(text)||/\b(?:from|by)\s+(?:rm|usd|\$)?\s*\d/.test(text);
+  const comparison=(text.match(/\d[\d,.]*/g)||[]).length>=2&&/\b(?:before|previously|was|were|used to)\b/.test(text)&&/\b(?:now|currently|today)\b/.test(text);
   const event=/\b(?:drop(?:ped|s|ping)?|declin(?:e|ed|es|ing)|fall(?:en|ing|s)?|fell|decreas(?:e|ed|es|ing)|miss(?:ed|es|ing)?|overdue|delayed|late|incorrect|wrong|incomplete|cancel(?:led|ed|s)?|broken|damaged|duplicated|stopped|reject(?:ed|s)?|rework|resign(?:ed|s)?|refund(?:ed|s)?|stalled|unanswered|unpaid|unresolved|lost|losing)\b/.test(text);
   const failure=/\b(?:does(?:n't| not)|did(?:n't| not)|has(?:n't| not)|have(?:n't| not)|cannot|can(?:'t| not)|fail(?:ed|s)? to|not)\s+(?:(?:been|being|ever|yet|always|regularly|consistently|get to|got to)\s+)*(?:follow(?:ing)?[- ]up|submit(?:ted)?|deliver(?:ed)?|respond(?:ed)?|reply|pay|paid|complete(?:d)?|convert(?:ed)?|return(?:ed)?|arrive(?:d)?|record(?:ed)?|close(?:d)?)\b/.test(text);
   const process=/\b(?:targets?|follow[- ]ups?|sop|procedure|pipeline|deadline|handover|invoice|payment|shipment|orders?|report|customers?|clients?|covers?|buyers?|prospects?|inquiry|enquiry|leads?|meeting|project|approval|contract|task|ticket|record|budget|quotation|delivery|deal|email|call|sales|stock|product|service|booking|revenue|data|equipment|machine|part|unit)\b/.test(text);
   const absence=/\b(?:no|without)\s+(?:(?:concrete|documented|defined|agreed|follow|up|follow-up|sales)\s+)*(?:sop|procedure|process|owner|ownership|record|handover)\b/.test(text);
-  return measured||((event||failure)&&process)||absence;
+  return measured||comparison||((event||failure)&&process)||absence;
  }
  function stateSpecific(p){return missing('State',p).length===0&&String(p.current||'').trim().length>=25&&String(p.statement||'').trim().length>=25&&!/^(?:my )?(?:sales|manager|staff|business|team)(?: is| are)? (?:bad|poor|not performing|a problem)[.!]?$/i.test(String(p.current||'').trim());}
  function frameworkStep(p){
